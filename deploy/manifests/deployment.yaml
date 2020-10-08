@@ -1,0 +1,28 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: origin-ca-issuer
+  namespace: origin-ca-issuer
+spec:
+  selector:
+    matchLabels:
+      app: origin-ca-issuer
+    replicas: 1
+    template:
+      metadata:
+        labels:
+          app: origin-ca-issuer
+      spec:
+        serviceAccountName: originissuer-control
+        containers:
+          # pushing to Docker Hub will be available after open sourcing
+          image: origin-ca-issuer:latest
+          name: origin-ca-controller
+          resources:
+            limits:
+              cpu: 100m
+              memory: 50Mi
+            requests:
+              cpu: 100m
+              memory: 50Mi
+    terminationGracePeriodSeconds: 10

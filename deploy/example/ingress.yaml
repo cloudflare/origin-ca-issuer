@@ -1,0 +1,27 @@
+# [[file:../../README.org::*Ingress Certificate][Ingress Certificate:1]]
+apiVersion: networking/v1
+kind: Ingress
+metadata:
+  annotations:
+    cert-manager.io/issuer: prod-issuer
+    cert-manager.io/issuer-kind: OriginIssuer
+    cert-manager.io/issuer-group: cert-manager.k8s.cloudflare.com
+  name: example
+  namespace: default
+spec:
+  rules:
+    - host: example.com
+      http:
+        paths:
+          - backend:
+              serviceName: examplesvc
+              servicePort: 80
+            path: /
+  tls:
+    # specifying a host in the TLS section will tell cert-manager what
+    # DNS SANs should be on the created certificate.
+    - hosts:
+        - example.com
+      # cert-manager will create this secret
+      secretName: example-tls
+# Ingress Certificate:1 ends here

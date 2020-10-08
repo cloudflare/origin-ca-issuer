@@ -1,0 +1,13 @@
+# [[file:../../README.org::*Adding an OriginIssuer][Adding an OriginIssuer:2]]
+apiVersion: cert-manager.k8s.cloudflare.com/v1
+kind: OriginIssuer
+metadata:
+  name: prod-issuer
+  namespace: default
+spec:
+  requestType: OriginECC
+  auth:
+    serviceKeyRef:
+      name: service-key
+      key: key
+# Adding an OriginIssuer:2 ends here
