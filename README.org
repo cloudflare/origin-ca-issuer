@@ -1,6 +1,6 @@
 #+TITLE: Origin CA Issuer
 
-Origin CA Issuer is a [[https://github.com/jetstack/cert-manager][cert-manager]] CertificateRequest controller for Cloudflare's [[https://developers.cloudflare.com/ssl/origin/origin-ca/][Origin CA]] feature.
+Origin CA Issuer is a [[https://github.com/jetstack/cert-manager][cert-manager]] CertificateRequest controller for Cloudflare's [[https://developers.cloudflare.com/ssl/origin-configuration/origin-ca][Origin CA]] feature.
 
 ** Getting Started
 We assume you have a Kubernetes cluster (1.16 or newer) with cert-manager (1.0 or newer) installed. We also assume you have permissions to create Custom Resource Definitions.
