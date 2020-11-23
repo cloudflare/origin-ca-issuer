@@ -7,13 +7,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - uses: nixbuild/nix-quick-install-action@v2
+      - uses: nixbuild/nix-quick-install-action@v4
       - run: nix-shell --pure --run "go test -v -race ./..."
   lint:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - uses: nixbuild/nix-quick-install-action@v2
+      - uses: nixbuild/nix-quick-install-action@v4
       - run: nix-shell --pure --run "golangci-lint run --timeout 15m"
   integration:
     needs:
@@ -22,5 +22,5 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - uses: nixbuild/nix-quick-install-action@v2
+      - uses: nixbuild/nix-quick-install-action@v4
       - run: nix-shell --pure --run "go test ./... -tags suite"
