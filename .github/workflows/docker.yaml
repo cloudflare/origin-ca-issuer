@@ -1,11 +1,24 @@
 name: Docker
 on:
-  - push
-  - pull_request
+  push:
+    tags:
+      - 'v*'
 jobs:
-  build:
+  publish-docker:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
       - uses: nixbuild/nix-quick-install-action@v4
-      - run: nix build -f ./hack/docker.nix
+      - run: nix-build ./hack/docker.nix -o docker-amd64
+      - run: nix-build ./hack/docker.nix --arg pkgs '(import ./hack/nixpkgs.nix {}).pkgsCross.aarch64-multiplatform' -o docker-arm64
+      - run: |
+          nix run -f ./hack/nixpkgs.nix pkgs.buildah<<EOF
+          buildah manifest create origin-ca-issuer
+          buildah manifest add origin-ca-issuer docker-archive:./docker-amd64
+          buildah manifest add origin-ca-issuer docker-archive:./docker-arm64
+          buildah manifest inspect origin-ca-issuer
+          buildah manifest push --all --creds ${DOCKER_HUB_USERNAME}:${DOCKER_HUB_TOKEN} -f v2s2 origin-ca-issuer docker://cloudflare/origin-ca-issuer:${GITHUB_REF#refs/tags/}
+          EOF
+        env:
+          DOCKER_HUB_USERNAME: ${{ secrets.DOCKER_HUB_USERNAME }}
+          DOCKER_HUB_TOKEN: ${{ secrets.DOCKER_HUB_TOKEN }}

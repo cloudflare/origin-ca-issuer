@@ -1,4 +1,6 @@
-with (import ./nixpkgs.nix { });
+{ pkgs ? import ./nixpkgs.nix { }, ... }:
+
+with pkgs;
 
 let controller = callPackage ./derivation.nix { };
 
