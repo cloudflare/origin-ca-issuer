@@ -1,4 +1,6 @@
-with (import ./hack/nixpkgs.nix { });
+{ pkgs ? import ./hack/nixpkgs.nix { }, ... }:
+
+with pkgs;
 
 let
   code-gen = buildGoModule rec {
