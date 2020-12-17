@@ -15,7 +15,6 @@ spec:
     spec:
       serviceAccountName: originissuer-control
       containers:
-        # pushing to Docker Hub will be available after open sourcing
       - image: cloudflare/origin-ca-issuer:v0.5.0
         name: origin-ca-controller
         resources:
