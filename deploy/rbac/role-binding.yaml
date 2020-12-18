@@ -8,5 +8,5 @@ roleRef:
   name: originissuer-control
 subjects:
   - kind: ServiceAccount
-    name: originisuer-control
+    name: originissuer-control
     namespace: origin-ca-issuer
