@@ -103,3 +103,32 @@ func (c *Client) Sign(ctx context.Context, req *SignRequest) (*SignResponse, err
 
 	return &api.Result, nil
 }
+
+// adapted from http://choly.ca/post/go-json-marshalling/
+func (r *SignResponse) UnmarshalJSON(p []byte) error {
+	type resp SignResponse
+
+	tmp := &struct {
+		Expiration string `json:"expires_on"`
+		*resp
+	}{
+		resp: (*resp)(r),
+	}
+
+	if err := json.Unmarshal(p, &tmp); err != nil {
+		return err
+	}
+
+	var err error
+	r.Expiration, err = time.Parse("2006-01-02 15:04:05.999999999 -0700 MST", tmp.Expiration)
+
+	if err != nil {
+		r.Expiration, err = time.Parse(time.RFC3339, tmp.Expiration)
+	}
+
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
