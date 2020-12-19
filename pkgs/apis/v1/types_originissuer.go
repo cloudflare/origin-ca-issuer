@@ -7,7 +7,7 @@ import (
 // +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object
 // +kubebuilder:subresource:status
 
-// An OriginIssuer represents the Cloudflare Origin CA as an external cert-manager isuer.
+// An OriginIssuer represents the Cloudflare Origin CA as an external cert-manager issuer.
 // It is scoped to a single namespace, so it can be used only by resources in the same
 // namespace.
 type OriginIssuer struct {
@@ -60,7 +60,7 @@ type OriginIssuerAuthentication struct {
 
 // SecretKeySelector contains a reference to a secret.
 type SecretKeySelector struct {
-	// Name of the secret in the OriginIssuer's naemspace to select from.
+	// Name of the secret in the OriginIssuer's namespace to select from.
 	Name string `json:"name"`
 	// Key of the secret to select from. Must be a valid secret key.
 	Key string `json:"key"`
@@ -74,7 +74,7 @@ type OriginIssuerCondition struct {
 	// Status of the condition, one of ('True', 'False', 'Unknown')
 	Status ConditionStatus `json:"status"`
 
-	// LastTransitioTime is the timestamp corresponding to the last status
+	// LastTransitionTime is the timestamp corresponding to the last status
 	// change of this condition.
 	// +optional
 	LastTransitionTime *metav1.Time `json:"lastTransitionTime,omitempty"`
@@ -99,7 +99,7 @@ const (
 	// RequestTypeOriginRSA represents an RSA256 signature.
 	RequestTypeOriginRSA RequestType = "OriginRSA"
 
-	// RequestTypeOriginECC respresnts an ECDSA signature.
+	// RequestTypeOriginECC represents an ECDSA signature.
 	RequestTypeOriginECC RequestType = "OriginECC"
 )
 

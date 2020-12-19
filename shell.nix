@@ -24,13 +24,13 @@ let
   };
   controller-tools = buildGoModule rec {
     pname = "controller-tools";
-    version = "0.4.0";
+    version = "0.4.1";
 
     src = fetchFromGitHub {
       owner = "kubernetes-sigs";
       repo = "controller-tools";
       rev = "v${version}";
-      sha256 = "0ix7m1fi06mhp8xxfg2r82jzyphzx2lm8jmx23l9ai654bcnnnwh";
+      sha256 = "0hbnz5my2bwds16hdb9fzbf2ri6lhpn3jd4si7z7lbaiv0zm429m";
     };
     subPackages = [ "cmd/controller-gen" ];
 
