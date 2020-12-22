@@ -1,0 +1,84 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ template "origin-ca-issuer.fullname" . }}
+  namespace: {{ .Release.Namespace | quote }}
+  labels:
+    app: {{ template "origin-ca-issuer.name" . }}
+    app.kubernetes.io/name: {{ template "origin-ca-issuer.name" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+    app.kubernetes.io/component: "controller"
+    helm.sh/chart: {{ template "origin-ca-issuer.chart" . }}
+    {{- if .Values.controller.deploymentLabels }}
+{{ toYaml .Values.controller.deploymentLabels | indent 4 }}
+    {{- end }}
+  {{- if .Values.controller.deploymentAnnotations }}
+  annotations: {{ toYaml .Values.controller.deploymentAnnotations | nindent 4 }}
+  {{- end }}
+spec:
+  replicas: {{ .Values.controller.replicaCount }}
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: {{ template "origin-ca-issuer.name" . }}
+      app.kubernetes.io/instance: {{ .Release.Name }}
+      app.kubernetes.io/component: "controller"
+  {{- with .Values.controller.strategy }}
+  strategy: {{ toYaml . | nindent 4 }}
+  {{- end }}
+  template:
+    metadata:
+      labels:
+        app: {{ template "origin-ca-issuer.name" . }}
+        app.kubernetes.io/name: {{ template "origin-ca-issuer.name" . }}
+        app.kubernetes.io/instance: {{ .Release.Name }}
+        app.kubernetes.io/component: "controller"
+        app.kubernetes.io/managed-by: {{ .Release.Service }}
+        helm.sh/chart: {{ template "origin-ca-issuer.chart" . }}
+        {{- if .Values.controller.podLabels }}
+{{ toYaml .Values.controller.podLabels | indent 8 }}
+        {{- end}}
+      {{- if .Values.controller.podAnnotations }}
+      annotations: {{ toYaml .Values.controller.podAnnotations | nindent 8 }}
+      {{- end }}
+    spec:
+      serviceAccountName: {{ template "origin-ca-issuer.serviceAccountName" . }}
+      {{- if .Values.global.priorityClassName }}
+      priorityClassName: {{ .Values.global.priorityClassName | quote }}
+      {{- end }}
+      {{- if .Values.controller.securityContext }}
+      securityContext: {{ toYaml .Values.controller.securityContext | nindent 8 }}
+      {{- end }}
+      {{- if .Values.controller.volumes }}
+      volumes: {{ toYaml .Values.controller.volumes | nindent 8 }}
+      {{- end }}
+      containers:
+        - name: {{ .Chart.Name }}
+          {{- with .Values.controller.image }}
+          image: "{{- if .registry -}}{{ .registry }}/{{- end -}}{{ .repository }}{{- if (.digest) -}} @{{.digest}}{{- else -}}:{{ default $.Chart.AppVersion .tag }} {{- end -}}"
+          {{- end }}
+          imagePullPolicy: {{ .Values.controller.image.pullPolicy }}
+          {{- if .Values.controller.containerSecurityContext }}
+          securityContext: {{- toYaml .Values.controller.containerSecurityContext | nindent 12 }}
+          {{- end}}
+          {{- if .Values.controller.volumeMounts }}
+          volumeMounts: {{ toYaml .Values.controller.volumeMounts | nindent 12 }}
+          {{- end }}
+          env:
+            - name: POD_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+            {{- if .Values.controller.extraEnv }}
+{{ toYaml .Values.controller.extraEnv | indent 12 }}
+            {{- end }}
+      resources: {{ toYaml .Values.controller.resources | nindent 8 }}
+      {{- with .Values.controller.nodeSelector }}
+      nodeSelector: {{ toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.controller.affinity }}
+      affinity: {{ toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.controller.tolerations }}
+      tolerations: {{ toYaml . | nindent 8 }}
+      {{- end }}

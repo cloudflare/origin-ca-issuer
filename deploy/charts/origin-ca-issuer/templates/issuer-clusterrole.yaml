@@ -1,0 +1,32 @@
+{{- if .Values.global.rbac.create }}
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: {{ template "origin-ca-issuer.fullname" . }}-controller
+  labels:
+    app: {{ template "origin-ca-issuer.name" . }}
+    app.kubernetes.io/name: {{ template "origin-ca-issuer.name" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+    app.kubernetes.io/component: "controller"
+    helm.sh/chart: {{ template "origin-ca-issuer.chart" . }}
+rules:
+  - apiGroups: [""]
+    resources: ["events"]
+    verbs: ["create", "patch"]
+  - apiGroups: [""]
+    resources: ["secrets"]
+    verbs: ["get", "list", "watch"]
+  - apiGroups: ["cert-manager.io"]
+    resources: ["certificatrequests"]
+    verbs: ["get", "list", "update", "watch"]
+  - apiGroups: ["cert-manager.io"]
+    resources: ["certificaterequests/status"]
+    verbs: ["get", "patch", "update"]
+  - apiGroups: ["cert-manager.k8s.cloudflare.com"]
+    resources: ["originissuers"]
+    verbs: ["create", "get", "list", "watch"]
+  - apiGroups: ["cert-manager.k8s.cloudflare.com"]
+    resources: ["originissuers/status"]
+    verbs: ["get", "patch", "update"]
+{{- end }}

@@ -1,0 +1,90 @@
+# Declare values passed into templates.
+global:
+  # Optional reference to one or more secrets to be used when pulling secrets.
+  # ref: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
+  #   imagePullSecrets:
+  #     - name: "my-image-pull-secret"
+  imagePullSecrets: []
+
+  # Optional priority class name to use on origin-ca-issuer pods
+  # ref: https://kubernetes.io/docs/concepts/configuration/pod-priority-preemption/
+  priorityClassName: ""
+
+  # Specifies whether RBAC resources should be created.
+  rbac:
+    create: true
+
+# Value specific to the origin-ca-issuer controller
+controller:
+  image:
+    repository: cloudflare/origin-ca-issuer
+    digest: sha256:76a0cadffd13cf77d75f6c1b7510ed8100706a776ad5a8d3345b192e8ac012d0
+    pullPolicy: Always
+
+  replicaCount: 1
+
+  # Optional deployment rollout strategy.
+  # ref: https://kubernetes.io/docs/concepts/workloads/controllers/deployment/#strategy
+  #   strategy:
+  #     rollingUpdate:
+  #       maxSurge: 0
+  #       maxUnavailable: 1
+  strategy: {}
+
+  # Optional additional arguments
+  extraArgs: []
+
+  # Optional additional environment variables
+  extraEnv: []
+
+  # Specifies the service account for the controller.
+  serviceAccount:
+    create: true
+    # The name of the service account to use. If not set, a name is generated based on the template's full name.
+    # name: ""
+    # Optional additional annotations to add to the controller's service account.
+    # annotations: {}
+
+  resources:
+    limits:
+      cpu: 100m
+      memory: 50Mi
+    requests:
+      cpu: 100m
+      memory: 50Mi
+
+  # Optional Pod Security Context
+  # ref: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/
+  securityContext: {}
+
+  # Optional Container Security Context
+  # ref: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/
+  containerSecurityContext: {}
+
+  # Optional volumes to use with the origin-ca-issuer pods
+  # ref: https://kubernetes.io/docs/tasks/configure-pod-container/configure-volume-storage/
+  volumes: []
+  volumeMounts: []
+
+  # Optional additional annotations to add to the deployment.
+  deploymentAnnotations: {}
+
+  # Optional additional labels to add to the deployment.
+  deploymentLabels: {}
+
+  # Optional additional annotations to add to the pods.
+  podAnnotations: {}
+
+  # Optional additional labels to add to the pods.
+  podLabels: {}
+
+  # Optional node selector for the deployment.
+  nodeSelector: {}
+
+  # Optional pod (anti-)affinities.
+  # ref: https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.11/#affinity-v1-core
+  affinity: {}
+
+  # Optional pod tolerations.
+  # ref: https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.11/#toleration-v1-core
+  tolerations: {}
