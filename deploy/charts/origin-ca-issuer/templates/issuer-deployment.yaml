@@ -72,7 +72,7 @@ spec:
             {{- if .Values.controller.extraEnv }}
 {{ toYaml .Values.controller.extraEnv | indent 12 }}
             {{- end }}
-      resources: {{ toYaml .Values.controller.resources | nindent 8 }}
+          resources: {{ toYaml .Values.controller.resources | nindent 12 }}
       {{- with .Values.controller.nodeSelector }}
       nodeSelector: {{ toYaml . | nindent 8 }}
       {{- end }}
