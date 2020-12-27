@@ -18,7 +18,7 @@ global:
 controller:
   image:
     repository: cloudflare/origin-ca-issuer
-    digest: sha256:76a0cadffd13cf77d75f6c1b7510ed8100706a776ad5a8d3345b192e8ac012d0
+    tag: v0.5.1
     pullPolicy: Always
 
   replicaCount: 1
