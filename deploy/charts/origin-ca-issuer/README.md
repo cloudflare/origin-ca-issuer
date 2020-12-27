@@ -12,7 +12,7 @@ origin-ca-issuer is a Kubernetes addon to automate issuance and renewals of Clou
 Before installing the chart, you must first install [cert-manager](https://cert-manager.io/docs/installation/), and the origin-ca-issuer CustomResourceDefinition resources.
 
 ```shell
-VERSION="v0.5.0"
+VERSION="v0.5.1"
 kubectl apply -f https://raw.githubusercontent.com/cloudflare/origin-ca-issuer/${VERSION}/deploy/crds/cert-manager.k8s.cloudflare.com_originissuers.yaml
 ```
 
@@ -34,7 +34,7 @@ helm delete my-release
 If you want to completely uninstall origin-ca-issuer from your cluster, you also need to delete the previously installed CustomResourceDefinition resources:
 
 ``` shell
-VERSION="v0.5.0"
+VERSION="v0.5.1"
 kubectl delete -f https://raw.githubusercontent.com/cloudflare/origin-ca-issuer/${VERSION}/deploy/crds/cert-manager.k8s.cloudflare.com_originissuers.yaml
 ```
 
