@@ -14,7 +14,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - uses: nixbuild/nix-quick-install-action@v4
-      - run: nix-shell --pure --run "golangci-lint run --timeout 15m"
+      - run: nix-shell --pure --run "golangci-lint run --timeout 15m -e 'please use pkg/envtest for testing'"
   integration:
     needs:
       - unit

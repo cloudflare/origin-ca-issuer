@@ -36,21 +36,21 @@ let
 
     vendorSha256 = "04nh4ql50w8w8zsqwg7rr0fz3lfnvky4l77rli8fpywg58z77n7k";
   };
+  # pin controller-runtime's envtest to Kubernetes 1.19.5 due to
+  # incompatibilites with 1.20:
+  #   https://github.com/kubernetes-sigs/controller-runtime/issues/1357
+  kubePkgs = import (builtins.fetchTarball {
+    name = "nixpkgs-2021-02-08-k8s-1.19.5";
+    url =
+      "https://github.com/NixOS/nixpkgs/archive/bed08131cd29a85f19716d9351940bdc34834492.tar.gz";
+    sha256 = "19gxrzk9y4g2f09x2a4g5699ccw35h5frznn9n0pbsyv45n9vxix";
+  }) { };
 
 in pkgs.mkShell {
-  nativeBuildInputs = [
-    go
-    gopls
-    goimports
-    golangci-lint
-    code-gen
-    controller-tools
-    etcd
-    kubernetes
-    kubectl
-  ];
+  nativeBuildInputs =
+    [ go gopls goimports golangci-lint code-gen controller-tools ];
 
-  TEST_ASSET_KUBE_APISERVER = "${kubernetes}/bin/kube-apiserver";
+  TEST_ASSET_KUBE_APISERVER = "${kubePkgs.kubernetes}/bin/kube-apiserver";
   TEST_ASSET_ETCD = "${etcd}/bin/etcd";
-  TEST_ASSET_KUBECTL = "${kubectl}/bin/kubectl";
+  TEST_ASSET_KUBECTL = "${kubePkgs.kubectl}/bin/kubectl";
 }
