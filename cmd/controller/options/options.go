@@ -9,6 +9,8 @@ import (
 type ControllerOptions struct {
 	KubernetesAPIQPS   float32
 	KubernetesAPIBurst int
+
+	DisableApprovedCheck bool
 }
 
 const (
@@ -26,6 +28,7 @@ func NewControllerOptions() *ControllerOptions {
 func (o *ControllerOptions) AddFlags(fs *pflag.FlagSet) {
 	fs.Float32Var(&o.KubernetesAPIQPS, "kube-api-qps", defaultKubernetesAPIQPS, "Maximium queries-per-second of requests to the Kubernetes apiserver.")
 	fs.IntVar(&o.KubernetesAPIBurst, "kube-api-burst", defaultKubernetesAPIBurst, "Maximium queries-per-second burst of request send to the Kubernetes apiserver.")
+	fs.BoolVar(&o.DisableApprovedCheck, "disable-approved-check", o.DisableApprovedCheck, "Disables waiting for CertificateRequests to have an approved condition before signing.")
 }
 
 func (o *ControllerOptions) Validate() error {

@@ -102,6 +102,9 @@ func main() {
 			Client:     mgr.GetClient(),
 			Log:        log.WithName("controllers").WithName("CertificateRequest"),
 			Collection: collection,
+
+			Clock:                  clock.RealClock{},
+			CheckApprovedCondition: !o.DisableApprovedCheck,
 		})
 
 	if err != nil {

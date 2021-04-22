@@ -29,4 +29,26 @@ rules:
   - apiGroups: ["cert-manager.k8s.cloudflare.com"]
     resources: ["originissuers/status"]
     verbs: ["get", "patch", "update"]
+---
+# permissions to approve all cert-manager.k8s.cloudflare.com requests
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: cert-manager-controller-approve:cert-manager-k8s-cloudflare-com
+  labels:
+    app: {{ template "origin-ca-issuer.name" . }}
+    app.kubernetes.io/name: {{ template "origin-ca-issuer.name" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+    app.kubernetes.io/component: "controller"
+    helm.sh/chart: {{ template "origin-ca-issuer.chart" . }}
+rules:
+  - apiGroups:
+    - cert-manager.io
+    resources:
+    - signers
+    verbs:
+    - approve
+    resourceNames:
+    - originissuers.cert-manager.k8s.cloudflare.com/*
 {{- end }}

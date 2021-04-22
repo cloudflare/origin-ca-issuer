@@ -18,4 +18,26 @@ subjects:
   - name: {{ template "origin-ca-issuer.serviceAccountName" . }}
     namespace: {{ .Release.Namespace | quote }}
     kind: ServiceAccount
+---
+# bind the cert-manager internal approver to approve
+# cert-manager.k8s.cloudflare.com CertificateRequests
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: cert-manager-controller-approve:cert-manager-k8s-cloudflare-com
+  labels:
+    app: {{ template "origin-ca-issuer.name" . }}
+    app.kubernetes.io/name: {{ template "origin-ca-issuer.name" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+    app.kubernetes.io/component: "controller"
+    helm.sh/chart: {{ template "origin-ca-issuer.chart" . }}
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: cert-manager-controller-approve:cert-manager-k8s-cloudflare-com
+subjects:
+- kind: ServiceAccount
+  name: cert-manager
+  namespace: cert-manager
 {{- end }}

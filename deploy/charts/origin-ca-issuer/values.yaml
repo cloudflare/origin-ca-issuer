@@ -31,6 +31,9 @@ controller:
   #       maxUnavailable: 1
   strategy: {}
 
+  # Disable waiting for CertificateRequests to be Approved before signing
+  disableApprovedCheck: false
+
   # Optional additional arguments
   extraArgs: []
 

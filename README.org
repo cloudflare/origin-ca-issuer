@@ -143,3 +143,6 @@ spec:
 #+END_SRC
 
 You may need additional annotations or =spec= fields for your specific Ingress controller.
+
+** Disable Approval Check
+The Origin Issuer will wait for CertificateRequests to have an [[https://cert-manager.io/docs/concepts/certificaterequest/#approval][approved condition set]] before signing. If using an older version of cert-manager (pre-v1.3), you can disable this check by supplying the command line flag =--disable-approved-check= to the Issuer Deployment.

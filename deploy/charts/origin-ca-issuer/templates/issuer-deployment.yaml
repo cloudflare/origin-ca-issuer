@@ -64,6 +64,10 @@ spec:
           {{- if .Values.controller.volumeMounts }}
           volumeMounts: {{ toYaml .Values.controller.volumeMounts | nindent 12 }}
           {{- end }}
+          {{- if .Values.controller.disableApprovedCheck }}
+          args:
+            - --disable-approved-check
+          {{- end }}
           env:
             - name: POD_NAMESPACE
               valueFrom:

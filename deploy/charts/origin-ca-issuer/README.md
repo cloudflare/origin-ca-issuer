@@ -68,6 +68,7 @@ The following table lists the configurable parameters of the origin-ca-issuer ch
 | `controller.nodeSelector`             | Node labels for pod assignment                                                          | `{}`                             |
 | `controller.affinity`                 | Node (anti-)affinity for pod assignemt                                                  | `{}`                             |
 | `controller.tolerations`              | Node tolerations for pod assignment                                                     | `{}`                             |
+| `controller.disableApprovedCheck`     | Disable waiting for CertificateRequests to be Approved before signing                   | `false`                          |
 
 Specify each parameter using the `--set key=value[,key=value]` argument to `helm install`.
 
