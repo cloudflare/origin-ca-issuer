@@ -13,10 +13,13 @@ spec:
     - host: example.com
       http:
         paths:
-          - backend:
-              serviceName: examplesvc
-              servicePort: 80
-            path: /
+         - pathType: Prefix
+           path: /
+           backend:
+              service:
+                name: examplesvc
+                port:
+                  number: 80
   tls:
     # specifying a host in the TLS section will tell cert-manager what
     # DNS SANs should be on the created certificate.
