@@ -15,7 +15,7 @@ spec:
     spec:
       serviceAccountName: originissuer-control
       containers:
-      - image: cloudflare/origin-ca-issuer:v0.5.1
+      - image: cloudflare/origin-ca-issuer:v0.6.0
         name: origin-ca-controller
         resources:
           limits:

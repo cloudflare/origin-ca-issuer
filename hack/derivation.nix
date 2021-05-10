@@ -2,7 +2,7 @@
 
 pkgs.buildGoModule rec {
   pname = "origin-ca-issuer";
-  version = "0.0.0";
+  version = "0.6.0";
 
   src = lib.sourceFilesBySuffices ../. [ ".go" ".mod" ".sum" ];
 
