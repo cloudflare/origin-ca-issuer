@@ -119,6 +119,7 @@ apiVersion: networking/v1
 kind: Ingress
 metadata:
   annotations:
+    # Reference the Origin CA Issuer you created above, which must be in the same namespace.
     cert-manager.io/issuer: prod-issuer
     cert-manager.io/issuer-kind: OriginIssuer
     cert-manager.io/issuer-group: cert-manager.k8s.cloudflare.com
