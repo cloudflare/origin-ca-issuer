@@ -1,3 +1,8 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: origin-cs-issuer
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
