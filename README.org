@@ -22,7 +22,8 @@ Then install the controller, which will process Certificate Requests created by 
 
 #+BEGIN_SRC sh
 kubectl apply -f deploy/manifests/namespace.yaml
-kubectl apply -f deploy/manifests
+kubectl apply -f deploy/manifests/serviceaccount.yaml
+kubectl apply -f deploy/manifests/deployment.yaml
 #+END_SRC
 
 By default the Origin CA Issuer will be deployed in the =origin-ca-issuer= namespace.
