@@ -98,7 +98,7 @@ spec:
   secretName: example-com-tls
   dnsNames:
     - example.com
-  # Duation of the certificate
+  # Duration of the certificate
   duration: 168h
   # Renew a day before the certificate expiration
   renewBefore: 24h
