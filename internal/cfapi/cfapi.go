@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"net/url"
 	"time"
 )
 
@@ -16,12 +17,14 @@ type Interface interface {
 type Client struct {
 	serviceKey []byte
 	client     *http.Client
+	endpoint   string
 }
 
 func New(serviceKey []byte, options ...Options) *Client {
 	c := &Client{
 		serviceKey: serviceKey,
 		client:     http.DefaultClient,
+		endpoint:   "https://api.cloudflare.com/client/v4/certificates",
 	}
 
 	for _, opt := range options {
@@ -37,6 +40,19 @@ func WithClient(client *http.Client) Options {
 	return func(c *Client) {
 		c.client = client
 	}
+}
+
+func WithEndpoint(endpoint string) (Options, error) {
+	u, err := url.Parse(endpoint)
+	if err != nil {
+		return nil, err
+	}
+
+	u.Path = "/client/v4/certificates"
+
+	return func(c *Client) {
+		c.endpoint = u.String()
+	}, nil
 }
 
 type SignRequest struct {
@@ -57,10 +73,10 @@ type SignResponse struct {
 }
 
 type APIResponse struct {
-	Success  bool         `json:"success"`
-	Errors   []APIError   `json:"errors"`
-	Messages []string     `json:"messages"`
-	Result   SignResponse `json:"result"`
+	Success  bool            `json:"success"`
+	Errors   []APIError      `json:"errors"`
+	Messages []string        `json:"messages"`
+	Result   json.RawMessage `json:"result"`
 }
 
 type APIError struct {
@@ -78,7 +94,7 @@ func (c *Client) Sign(ctx context.Context, req *SignRequest) (*SignResponse, err
 		return nil, err
 	}
 
-	r, err := http.NewRequestWithContext(ctx, "POST", "https://api.cloudflare.com/client/v4/certificates", bytes.NewBuffer(p))
+	r, err := http.NewRequestWithContext(ctx, "POST", c.endpoint, bytes.NewBuffer(p))
 	if err != nil {
 		return nil, err
 	}
@@ -101,7 +117,12 @@ func (c *Client) Sign(ctx context.Context, req *SignRequest) (*SignResponse, err
 		return nil, &api.Errors[0]
 	}
 
-	return &api.Result, nil
+	signResp := SignResponse{}
+	if err := json.Unmarshal(api.Result, &signResp); err != nil {
+		return nil, err
+	}
+
+	return &signResp, nil
 }
 
 // adapted from http://choly.ca/post/go-json-marshalling/
