@@ -18,7 +18,7 @@ global:
 controller:
   image:
     repository: cloudflare/origin-ca-issuer
-    tag: v0.6.0
+    tag: v0.6.1
     pullPolicy: Always
 
   replicaCount: 1
