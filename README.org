@@ -46,7 +46,7 @@ kubectl create secret generic \
     --from-literal key=v1.0-FFFFFFF-FFFFFFFF -oyaml
 #+END_SRC
 
-The create an OriginIssuer referencing the secret created above.
+Then create an OriginIssuer referencing the secret created above.
 
 #+BEGIN_SRC yaml :tangle ./deploy/example/issuer.yaml :comments link
 apiVersion: cert-manager.k8s.cloudflare.com/v1
