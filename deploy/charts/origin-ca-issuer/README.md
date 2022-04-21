@@ -22,7 +22,7 @@ To install the chart with the release name `my-release`:
 helm install --name my-release --namespace origin-ca-issuer .
 ```
 
-In order to begin issuer certificates from the Cloudflare Origin CA you will need to setup an OriginIssuer. For more information, see the [documentation])(https://github.com/cloudflare/origin-ca-issuer/blob/trunk/README.org).
+In order to begin issuer certificates from the Cloudflare Origin CA you will need to setup an OriginIssuer. For more information, see the [documentation](https://github.com/cloudflare/origin-ca-issuer/blob/trunk/README.org).
 
 ## Uninstalling the Chart
 
