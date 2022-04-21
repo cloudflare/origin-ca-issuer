@@ -1,4 +1,4 @@
-# origin-ca-issuser
+# origin-ca-issuer
 
 origin-ca-issuer is a Kubernetes addon to automate issuance and renewals of Cloudflare Origin CA certificates with cert-manager.
 
