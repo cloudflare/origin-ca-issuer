@@ -32,8 +32,7 @@ type OriginIssuerController struct {
 // +kubebuilder:rbac:groups="",resources=events,verbs=create;patch
 
 // Reconcile reconciles OriginIssuer resources by managing Cloudflare API provisioners.
-func (r *OriginIssuerController) Reconcile(req reconcile.Request) (reconcile.Result, error) {
-	ctx := context.TODO()
+func (r *OriginIssuerController) Reconcile(ctx context.Context, req reconcile.Request) (reconcile.Result, error) {
 	log := r.Log.WithValues("originissuer", req.NamespacedName)
 
 	iss := &v1.OriginIssuer{}

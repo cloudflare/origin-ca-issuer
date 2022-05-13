@@ -10,11 +10,12 @@ import (
 	"testing"
 	"time"
 
-	"github.com/butonic/zerologr"
 	"github.com/cloudflare/origin-ca-issuer/internal/cfapi"
 	v1 "github.com/cloudflare/origin-ca-issuer/pkgs/apis/v1"
 	"github.com/cloudflare/origin-ca-issuer/pkgs/provisioners"
+	"github.com/go-logr/zerologr"
 	cmapi "github.com/jetstack/cert-manager/pkg/apis/certmanager/v1"
+	"github.com/rs/zerolog"
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/types"
@@ -30,7 +31,8 @@ import (
 var cfg *rest.Config
 
 func TestMain(m *testing.M) {
-	logf.SetLogger(zerologr.New())
+	zl := zerolog.Nop()
+	logf.SetLogger(zerologr.New(&zl))
 	t := &envtest.Environment{
 		CRDDirectoryPaths: []string{filepath.Join("..", "..", "deploy", "crds")},
 	}
@@ -97,9 +99,9 @@ func TestOriginIssuerReconcileSuite(t *testing.T) {
 		For(&v1.OriginIssuer{}).
 		Complete(controller)
 
-	stop, errChan := StartTestManager(mgr, t)
+	cancel, errChan := StartTestManager(mgr, t)
 	defer func() {
-		close(stop)
+		cancel()
 		if err := <-errChan; err != nil {
 			t.Fatalf("error starting test manager: %v", err)
 		}
@@ -140,17 +142,18 @@ func TestOriginIssuerReconcileSuite(t *testing.T) {
 	}
 }
 
-func StartTestManager(mgr manager.Manager, t *testing.T) (chan struct{}, chan error) {
+func StartTestManager(mgr manager.Manager, t *testing.T) (context.CancelFunc, chan error) {
 	t.Helper()
 
-	stop := make(chan struct{})
+	ctx, cancel := context.WithCancel(context.Background())
+
 	errs := make(chan error, 1)
 
 	go func() {
-		errs <- mgr.Start(stop)
+		errs <- mgr.Start(ctx)
 	}()
 
-	return stop, errs
+	return cancel, errs
 }
 
 func Eventually(t *testing.T, condition func() bool, waitFor time.Duration, tick time.Duration, message string) bool {

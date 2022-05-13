@@ -3,54 +3,45 @@
 with pkgs;
 
 let
-  code-gen = buildGoModule rec {
+  code-gen = buildGo117Module rec {
     pname = "code-generator";
-    version = "0.18.9";
+    version = "0.24.0";
 
     src = fetchFromGitHub {
       owner = "kubernetes";
       repo = "code-generator";
       rev = "v${version}";
-      sha256 = "1aj2h6b1aj0kxxcx3hkms01fipmw70v40ws583lldz2ch7pw78gd";
+      sha256 = "1gzw1fs458ffnvd9hpk9n4azsbm7k90sq6b5lfyf270xzw4cm4hx";
     };
     subPackages = [ "cmd/deepcopy-gen" "cmd/register-gen" ];
 
-    vendorSha256 = "14csplyhfy56c10bmm8vvzhc14gk7dw4859ifyn3kbprj2av6kzb";
+    vendorSha256 = "0g5mjk3kzdzary841cx8c2j21v7yzr3vmqcl2pdkkpqldsy4zrx7";
 
     # deepcopy-gen calls `go list` which wants to inspect GOROOT.
     # I could specify when run, but we're building everything with a specific
     # Go version anyways.
     allowGoReference = true;
   };
-  controller-tools = buildGoModule rec {
+  controller-tools = buildGo117Module rec {
     pname = "controller-tools";
-    version = "0.4.1";
+    version = "0.8.0";
 
     src = fetchFromGitHub {
       owner = "kubernetes-sigs";
       repo = "controller-tools";
       rev = "v${version}";
-      sha256 = "0hbnz5my2bwds16hdb9fzbf2ri6lhpn3jd4si7z7lbaiv0zm429m";
+      sha256 = "0cqmpj4gk1h6g6x6y63clbg3b4amfpm3qbypwj1dj4nc7ybgyygs";
     };
     subPackages = [ "cmd/controller-gen" ];
 
-    vendorSha256 = "04nh4ql50w8w8zsqwg7rr0fz3lfnvky4l77rli8fpywg58z77n7k";
+    vendorSha256 = "18az4a9lwm1w2a5ml9gil4khg74grar1d15x3643h0jly2qpf8a0";
   };
-  # pin controller-runtime's envtest to Kubernetes 1.19.5 due to
-  # incompatibilites with 1.20:
-  #   https://github.com/kubernetes-sigs/controller-runtime/issues/1357
-  kubePkgs = import (builtins.fetchTarball {
-    name = "nixpkgs-2021-02-08-k8s-1.19.5";
-    url =
-      "https://github.com/NixOS/nixpkgs/archive/bed08131cd29a85f19716d9351940bdc34834492.tar.gz";
-    sha256 = "19gxrzk9y4g2f09x2a4g5699ccw35h5frznn9n0pbsyv45n9vxix";
-  }) { };
 
 in pkgs.mkShell {
   nativeBuildInputs =
     [ go_1_17 gopls goimports golangci-lint code-gen controller-tools ];
 
-  TEST_ASSET_KUBE_APISERVER = "${kubePkgs.kubernetes}/bin/kube-apiserver";
+  TEST_ASSET_KUBE_APISERVER = "${kubernetes}/bin/kube-apiserver";
   TEST_ASSET_ETCD = "${etcd}/bin/etcd";
-  TEST_ASSET_KUBECTL = "${kubePkgs.kubectl}/bin/kubectl";
+  TEST_ASSET_KUBECTL = "${kubectl}/bin/kubectl";
 }

@@ -168,7 +168,11 @@ func TestOriginIssuerReconcile(t *testing.T) {
 	for _, tt := range tests {
 		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
-			client := fake.NewFakeClientWithScheme(scheme.Scheme, tt.objects...)
+			client := fake.NewClientBuilder().
+				WithScheme(scheme.Scheme).
+				WithRuntimeObjects(tt.objects...).
+				Build()
+
 			collection := provisioners.CollectionWith(nil)
 
 			controller := &OriginIssuerController{
@@ -181,7 +185,7 @@ func TestOriginIssuerReconcile(t *testing.T) {
 				Collection: collection,
 			}
 
-			_, err := controller.Reconcile(reconcile.Request{
+			_, err := controller.Reconcile(context.Background(), reconcile.Request{
 				NamespacedName: tt.namespaceName,
 			})
 

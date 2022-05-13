@@ -139,7 +139,10 @@ func TestCertificateRequestReconcile(t *testing.T) {
 	for _, tt := range tests {
 		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
-			client := fake.NewFakeClientWithScheme(scheme.Scheme, tt.objects...)
+			client := fake.NewClientBuilder().
+				WithScheme(scheme.Scheme).
+				WithRuntimeObjects(tt.objects...).
+				Build()
 
 			controller := &CertificateRequestController{
 				Client:     client,
@@ -147,7 +150,7 @@ func TestCertificateRequestReconcile(t *testing.T) {
 				Collection: tt.collection,
 			}
 
-			_, err := controller.Reconcile(reconcile.Request{
+			_, err := controller.Reconcile(context.Background(), reconcile.Request{
 				NamespacedName: tt.namespaceName,
 			})
 
