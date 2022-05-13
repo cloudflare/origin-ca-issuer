@@ -48,7 +48,7 @@ let
 
 in pkgs.mkShell {
   nativeBuildInputs =
-    [ go gopls goimports golangci-lint code-gen controller-tools ];
+    [ go_1_17 gopls goimports golangci-lint code-gen controller-tools ];
 
   TEST_ASSET_KUBE_APISERVER = "${kubePkgs.kubernetes}/bin/kube-apiserver";
   TEST_ASSET_ETCD = "${etcd}/bin/etcd";

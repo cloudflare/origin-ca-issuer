@@ -1,6 +1,6 @@
 { config, lib, pkgs, ... }:
 
-pkgs.buildGoModule rec {
+pkgs.buildGo117Module rec {
   pname = "origin-ca-issuer";
   version = "0.6.1";
 
