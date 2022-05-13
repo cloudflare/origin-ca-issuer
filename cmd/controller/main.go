@@ -5,19 +5,20 @@ import (
 	"os"
 	"time"
 
-	"github.com/butonic/zerologr"
 	"github.com/cloudflare/origin-ca-issuer/cmd/controller/options"
 	"github.com/cloudflare/origin-ca-issuer/internal/cfapi"
 	v1 "github.com/cloudflare/origin-ca-issuer/pkgs/apis/v1"
 	"github.com/cloudflare/origin-ca-issuer/pkgs/controllers"
 	"github.com/cloudflare/origin-ca-issuer/pkgs/provisioners"
+	"github.com/go-logr/zerologr"
 	certmanager "github.com/jetstack/cert-manager/pkg/apis/certmanager/v1"
+	"github.com/rs/zerolog"
 	"github.com/spf13/pflag"
 	"k8s.io/apimachinery/pkg/runtime"
 	clientgoscheme "k8s.io/client-go/kubernetes/scheme"
-	"k8s.io/client-go/tools/clientcmd"
 	"k8s.io/utils/clock"
 	"sigs.k8s.io/controller-runtime/pkg/builder"
+	"sigs.k8s.io/controller-runtime/pkg/client/config"
 	logf "sigs.k8s.io/controller-runtime/pkg/log"
 	"sigs.k8s.io/controller-runtime/pkg/manager"
 	"sigs.k8s.io/controller-runtime/pkg/manager/signals"
@@ -27,11 +28,15 @@ func main() {
 	fs := pflag.CommandLine
 	o := options.NewControllerOptions()
 	o.AddFlags(fs)
-	kubeconfig := buildKubeConfig(fs)
 
 	_ = fs.Parse(os.Args[1:])
 
-	logf.SetLogger(zerologr.New())
+	zerolog.TimeFieldFormat = zerolog.TimeFormatUnixMs
+	zerologr.NameFieldName = "logger"
+	zerologr.NameSeparator = "/"
+
+	zl := zerolog.New(os.Stderr).With().Caller().Timestamp().Logger()
+	logf.SetLogger(zerologr.New(&zl))
 	log := logf.Log.WithName("origin-issuer").V(8)
 
 	if err := o.Validate(); err != nil {
@@ -53,7 +58,7 @@ func main() {
 		os.Exit(1)
 	}
 
-	kubeCfg, err := kubeconfig.ClientConfig()
+	kubeCfg, err := config.GetConfig()
 	if err != nil {
 		log.Error(err, "could not load kubeconfig")
 		os.Exit(1)
@@ -116,13 +121,4 @@ func main() {
 		log.Error(err, "could not start manager")
 		os.Exit(1)
 	}
-}
-
-func buildKubeConfig(fs *pflag.FlagSet) clientcmd.ClientConfig {
-	loadingRules := clientcmd.NewDefaultClientConfigLoadingRules()
-	configOverrides := &clientcmd.ConfigOverrides{}
-	clientcmd.BindOverrideFlags(configOverrides, fs, clientcmd.RecommendedConfigOverrideFlags(""))
-	fs.StringVar(&loadingRules.ExplicitPath, clientcmd.RecommendedConfigPathFlag, loadingRules.ExplicitPath, "Path to the kubeconfig file to use. If not set, attempts autoconfiguration")
-
-	return clientcmd.NewNonInteractiveDeferredLoadingClientConfig(loadingRules, configOverrides)
 }

@@ -34,8 +34,7 @@ type CertificateRequestController struct {
 
 // Reconcile reconciles CertificateRequest by fetching a Cloudflare API provisioner from
 // the referenced OriginIssuer, and providing the request's CSR.
-func (r *CertificateRequestController) Reconcile(req reconcile.Request) (reconcile.Result, error) {
-	ctx := context.TODO()
+func (r *CertificateRequestController) Reconcile(ctx context.Context, req reconcile.Request) (reconcile.Result, error) {
 	log := r.Log.WithValues("certificaterequest", req.NamespacedName)
 
 	cr := &certmanager.CertificateRequest{}
