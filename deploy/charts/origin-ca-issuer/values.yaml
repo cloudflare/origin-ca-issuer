@@ -40,6 +40,10 @@ controller:
   # Optional additional environment variables
   extraEnv: []
 
+  # Specified the service account from Cert Manager
+  cert-manager-serviceAccount:
+    name: cert-manager
+
   # Specifies the service account for the controller.
   serviceAccount:
     create: true
