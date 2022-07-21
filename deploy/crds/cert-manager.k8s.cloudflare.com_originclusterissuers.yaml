@@ -5,22 +5,21 @@ metadata:
   annotations:
     controller-gen.kubebuilder.io/version: v0.8.0
   creationTimestamp: null
-  name: originissuers.cert-manager.k8s.cloudflare.com
+  name: originclusterissuers.cert-manager.k8s.cloudflare.com
 spec:
   group: cert-manager.k8s.cloudflare.com
   names:
-    kind: OriginIssuer
-    listKind: OriginIssuerList
-    plural: originissuers
-    singular: originissuer
-  scope: Namespaced
+    kind: OriginClusterIssuer
+    listKind: OriginClusterIssuerList
+    plural: originclusterissuers
+    singular: originclusterissuer
+  scope: Cluster
   versions:
   - name: v1
     schema:
       openAPIV3Schema:
-        description: An OriginIssuer represents the Cloudflare Origin CA as an external
-          cert-manager issuer. It is scoped to a single namespace, so it can be used
-          only by resources in the same namespace.
+        description: An OriginClusterIssuer represents the Cloudflare Origin CA as
+          an external cert-manager issuer. It is cluster wide.
         properties:
           apiVersion:
             description: 'APIVersion defines the versioned schema of this representation

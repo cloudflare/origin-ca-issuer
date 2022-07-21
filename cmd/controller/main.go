@@ -94,9 +94,24 @@ func main() {
 			Log:        log.WithName("controllers").WithName("OriginIssuer"),
 			Collection: collection,
 		})
-
 	if err != nil {
 		log.Error(err, "could not create origin issuer controller")
+		os.Exit(1)
+	}
+
+	err = builder.
+		ControllerManagedBy(mgr).
+		For(&v1.OriginClusterIssuer{}).
+		Complete(&controllers.OriginClusterIssuerController{
+			Client:     mgr.GetClient(),
+			Clock:      clock.RealClock{},
+			Factory:    f,
+			Log:        log.WithName("controllers").WithName("OriginClusterIssuer"),
+			Collection: collection,
+		})
+
+	if err != nil {
+		log.Error(err, "could not create origin cluster issuer controller")
 		os.Exit(1)
 	}
 

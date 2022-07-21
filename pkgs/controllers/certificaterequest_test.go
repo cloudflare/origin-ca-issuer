@@ -40,15 +40,16 @@ func TestCertificateRequestReconcile(t *testing.T) {
 	cmutil.Clock = clock
 
 	tests := []struct {
-		name          string
-		objects       []runtime.Object
-		collection    *provisioners.Collection
-		expected      cmapi.CertificateRequestStatus
-		error         string
-		namespaceName types.NamespacedName
+		name                     string
+		objects                  []runtime.Object
+		collection               *provisioners.Collection
+		expected                 cmapi.CertificateRequestStatus
+		error                    string
+		certificateNamespaceName types.NamespacedName
+		provisionerNamespaceName types.NamespacedName
 	}{
 		{
-			name: "working",
+			name: "working originissuer",
 			objects: []runtime.Object{
 				cmgen.CertificateRequest("foobar",
 					cmgen.SetCertificateRequestNamespace("default"),
@@ -129,9 +130,102 @@ func TestCertificateRequestReconcile(t *testing.T) {
 				},
 				Certificate: []byte("bogus"),
 			},
-			namespaceName: types.NamespacedName{
+			certificateNamespaceName: types.NamespacedName{
 				Namespace: "default",
 				Name:      "foobar",
+			},
+			provisionerNamespaceName: types.NamespacedName{
+				Namespace: "default",
+				Name:      "foobar",
+			},
+		},
+		{
+			name: "working originclusterissuer",
+			objects: []runtime.Object{
+				cmgen.CertificateRequest("foobar",
+					cmgen.SetCertificateRequestNamespace("default"),
+					cmgen.SetCertificateRequestDuration(&metav1.Duration{Duration: 7 * 24 * time.Hour}),
+					cmgen.SetCertificateRequestCSR((func() []byte {
+						csr, _, err := cmgen.CSR(x509.ECDSA)
+						if err != nil {
+							t.Fatalf("creating CSR: %s", err)
+						}
+
+						return csr
+					})()),
+					cmgen.SetCertificateRequestIssuer(cmmeta.ObjectReference{
+						Name:  "foobar",
+						Kind:  "OriginClusterIssuer",
+						Group: "cert-manager.k8s.cloudflare.com",
+					}),
+				),
+				&v1.OriginClusterIssuer{
+					ObjectMeta: metav1.ObjectMeta{
+						Name: "foobar",
+					},
+					Spec: v1.OriginIssuerSpec{
+						Auth: v1.OriginIssuerAuthentication{
+							ServiceKeyRef: v1.SecretKeySelector{
+								Name:      "service-key-issuer",
+								Namespace: "default",
+								Key:       "key",
+							},
+						},
+					},
+					Status: v1.OriginIssuerStatus{
+						Conditions: []v1.OriginIssuerCondition{
+							{
+								Type:   v1.ConditionReady,
+								Status: v1.ConditionTrue,
+							},
+						},
+					},
+				},
+			},
+			collection: provisioners.CollectionWith([]provisioners.CollectionItem{
+				{
+					NamespacedName: types.NamespacedName{
+						Name: "foobar",
+					},
+					Provisioner: (func() *provisioners.Provisioner {
+						c := &fakeapi.FakeClient{
+							Response: &cfapi.SignResponse{
+								Id:          "1",
+								Certificate: "bogus",
+								Hostnames:   []string{"example.com"},
+								Expiration:  time.Time{},
+								Type:        "colemak",
+								Validity:    0,
+								CSR:         "foobar",
+							},
+						}
+						p, err := provisioners.New(c, v1.RequestTypeOriginRSA, logf.Log)
+						if err != nil {
+							t.Fatalf("error creating provisioner: %s", err)
+						}
+
+						return p
+					}()),
+				},
+			}),
+			expected: cmapi.CertificateRequestStatus{
+				Conditions: []cmapi.CertificateRequestCondition{
+					{
+						Type:               cmapi.CertificateRequestConditionReady,
+						Status:             cmmeta.ConditionTrue,
+						LastTransitionTime: &now,
+						Reason:             "Issued",
+						Message:            "Certificate issued",
+					},
+				},
+				Certificate: []byte("bogus"),
+			},
+			certificateNamespaceName: types.NamespacedName{
+				Name:      "foobar",
+				Namespace: "default",
+			},
+			provisionerNamespaceName: types.NamespacedName{
+				Name: "foobar",
 			},
 		},
 	}
@@ -151,7 +245,7 @@ func TestCertificateRequestReconcile(t *testing.T) {
 			}
 
 			_, err := controller.Reconcile(context.Background(), reconcile.Request{
-				NamespacedName: tt.namespaceName,
+				NamespacedName: tt.certificateNamespaceName,
 			})
 
 			if err != nil {
@@ -161,7 +255,7 @@ func TestCertificateRequestReconcile(t *testing.T) {
 			}
 
 			got := &cmapi.CertificateRequest{}
-			if err := client.Get(context.TODO(), tt.namespaceName, got); err != nil {
+			if err := client.Get(context.TODO(), tt.certificateNamespaceName, got); err != nil {
 				t.Fatalf("expected to retrieve issuer from client: %s", err)
 			}
 			if diff := cmp.Diff(got.Status, tt.expected); diff != "" {
@@ -169,7 +263,7 @@ func TestCertificateRequestReconcile(t *testing.T) {
 			}
 
 			if tt.error == "" {
-				if _, ok := controller.Collection.Load(tt.namespaceName); !ok {
+				if _, ok := controller.Collection.Load(tt.provisionerNamespaceName); !ok {
 					t.Fatal("was unable to find provisioner")
 				}
 			}

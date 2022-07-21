@@ -41,6 +41,7 @@ rules:
   - cert-manager.k8s.cloudflare.com
   resources:
   - originissuers
+  - originclusterissuers
   verbs:
   - create
   - get
@@ -50,6 +51,7 @@ rules:
   - cert-manager.k8s.cloudflare.com
   resources:
   - originissuers/status
+  - originclusterissuers/status
   verbs:
   - get
   - patch

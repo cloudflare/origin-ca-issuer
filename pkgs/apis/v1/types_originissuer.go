@@ -4,6 +4,13 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
+type IssuerType string
+
+const (
+	OriginIssuerType        IssuerType = "OriginIssuer"
+	OriginClusterIssuerType IssuerType = "OriginClusterIssuer"
+)
+
 // +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object
 // +kubebuilder:subresource:status
 
@@ -30,6 +37,34 @@ type OriginIssuerList struct {
 	metav1.ListMeta `json:"metadata.omitempty"`
 
 	Items []OriginIssuer `json:"items"`
+}
+
+// +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object
+// +kubebuilder:subresource:status
+// +kubebuilder:resource:scope=Cluster
+
+// An OriginClusterIssuer represents the Cloudflare Origin CA as an external cert-manager issuer.
+// It is cluster wide.
+type OriginClusterIssuer struct {
+	metav1.TypeMeta   `json:",inline"`
+	metav1.ObjectMeta `json:"metadata,omitempty"`
+
+	// Desired state of the OriginIssuer resource
+	Spec OriginIssuerSpec `json:"spec,omitempty"`
+
+	// Status of the OriginIssuer. This is set and managed automatically.
+	// +optional
+	Status OriginIssuerStatus `json:"status,omitempty"`
+}
+
+// +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object
+
+// OriginClusterIssuerList is a list of OriginClusterIssuer.
+type OriginClusterIssuerList struct {
+	metav1.TypeMeta `json:",inline"`
+	metav1.ListMeta `json:"metadata.omitempty"`
+
+	Items []OriginClusterIssuer `json:"items"`
 }
 
 // OriginIssuerSpec is the specification of an OriginIssuer. This includes any
@@ -62,6 +97,8 @@ type OriginIssuerAuthentication struct {
 type SecretKeySelector struct {
 	// Name of the secret in the OriginIssuer's namespace to select from.
 	Name string `json:"name"`
+	// Namespace of the secret in the OriginIssuer's namespace to select from.
+	Namespace string `json:"namespace,omitempty"`
 	// Key of the secret to select from. Must be a valid secret key.
 	Key string `json:"key"`
 }
@@ -131,3 +168,67 @@ const (
 	// ConditionUnknown represents the fact that a given condition is unknown.
 	ConditionUnknown ConditionStatus = "Unknown"
 )
+
+func (o *OriginIssuer) GetSpec() OriginIssuerSpec {
+	return o.Spec
+}
+
+func (o *OriginIssuer) GetStatus() OriginIssuerStatus {
+	return o.Status
+}
+
+func (o *OriginIssuer) GetSecretName() string {
+	return o.Spec.Auth.ServiceKeyRef.Name
+}
+
+func (o *OriginIssuer) GetSecretNamespace() string {
+	return o.Spec.Auth.ServiceKeyRef.Namespace
+}
+
+func (o *OriginIssuer) GetSecretKey() string {
+	return o.Spec.Auth.ServiceKeyRef.Key
+}
+
+func (o *OriginIssuer) GetRequestType() RequestType {
+	return o.Spec.RequestType
+}
+
+func (o *OriginIssuer) SetConditions(conditions []OriginIssuerCondition) {
+	o.Status.Conditions = conditions
+}
+
+func (o *OriginIssuer) GetType() IssuerType {
+	return OriginIssuerType
+}
+
+func (o *OriginClusterIssuer) GetSpec() OriginIssuerSpec {
+	return o.Spec
+}
+
+func (o *OriginClusterIssuer) GetStatus() OriginIssuerStatus {
+	return o.Status
+}
+
+func (o *OriginClusterIssuer) GetSecretName() string {
+	return o.Spec.Auth.ServiceKeyRef.Name
+}
+
+func (o *OriginClusterIssuer) GetSecretNamespace() string {
+	return o.Spec.Auth.ServiceKeyRef.Namespace
+}
+
+func (o *OriginClusterIssuer) GetSecretKey() string {
+	return o.Spec.Auth.ServiceKeyRef.Key
+}
+
+func (o *OriginClusterIssuer) GetRequestType() RequestType {
+	return o.Spec.RequestType
+}
+
+func (o *OriginClusterIssuer) SetConditions(conditions []OriginIssuerCondition) {
+	o.Status.Conditions = conditions
+}
+
+func (o *OriginClusterIssuer) GetType() IssuerType {
+	return OriginClusterIssuerType
+}

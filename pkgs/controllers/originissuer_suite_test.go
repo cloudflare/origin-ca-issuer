@@ -1,3 +1,4 @@
+//go:build suite
 // +build suite
 
 package controllers
@@ -65,6 +66,21 @@ func TestOriginIssuerReconcileSuite(t *testing.T) {
 			},
 		},
 	}
+	clusterIssuer := &v1.OriginClusterIssuer{
+		ObjectMeta: metav1.ObjectMeta{
+			Name: "foo",
+		},
+		Spec: v1.OriginIssuerSpec{
+			RequestType: v1.RequestTypeOriginRSA,
+			Auth: v1.OriginIssuerAuthentication{
+				ServiceKeyRef: v1.SecretKeySelector{
+					Name:      "issuer-service-key",
+					Namespace: "default",
+					Key:       "key",
+				},
+			},
+		},
+	}
 	secret := &corev1.Secret{
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      "issuer-service-key",
@@ -116,6 +132,10 @@ func TestOriginIssuerReconcileSuite(t *testing.T) {
 		t.Fatalf("error creating instance: %v", err)
 	}
 	defer c.Delete(context.TODO(), issuer)
+	if err := c.Create(context.TODO(), clusterIssuer); err != nil {
+		t.Fatalf("error creating instance: %v", err)
+	}
+	defer c.Delete(context.TODO(), clusterIssuer)
 
 	Eventually(t, func() bool {
 		iss := v1.OriginIssuer{}
@@ -132,9 +152,31 @@ func TestOriginIssuerReconcileSuite(t *testing.T) {
 		return IssuerHasCondition(iss, v1.OriginIssuerCondition{Type: v1.ConditionReady, Status: v1.ConditionTrue})
 	}, 5*time.Second, 10*time.Millisecond, "OriginIssuer reconciler")
 
+	Eventually(t, func() bool {
+		iss := v1.OriginClusterIssuer{}
+		namespacedName := types.NamespacedName{
+			Name: clusterIssuer.Name,
+		}
+
+		err := c.Get(context.TODO(), namespacedName, &iss)
+		if err != nil {
+			return false
+		}
+
+		return IssuerHasCondition(iss, v1.OriginIssuerCondition{Type: v1.ConditionReady, Status: v1.ConditionTrue})
+	}, 5*time.Second, 10*time.Millisecond, "OriginIssuer reconciler")
+
 	_, ok := controller.Collection.Load(types.NamespacedName{
 		Namespace: issuer.Namespace,
 		Name:      issuer.Name,
+	})
+
+	if !ok {
+		t.Fatal("was unable to find provisioner")
+	}
+
+	_, ok := controller.Collection.Load(types.NamespacedName{
+		Name: clusterIssuer.Name,
 	})
 
 	if !ok {

@@ -10,7 +10,6 @@ import (
 	cmutil "github.com/jetstack/cert-manager/pkg/api/util"
 	certmanager "github.com/jetstack/cert-manager/pkg/apis/certmanager/v1"
 	cmmeta "github.com/jetstack/cert-manager/pkg/apis/meta/v1"
-	apierrors "k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/types"
 	"k8s.io/utils/clock"
@@ -39,18 +38,13 @@ func (r *CertificateRequestController) Reconcile(ctx context.Context, req reconc
 
 	cr := &certmanager.CertificateRequest{}
 	if err := r.Client.Get(ctx, req.NamespacedName, cr); err != nil {
-		if apierrors.IsNotFound(err) {
-			return reconcile.Result{}, client.IgnoreNotFound(err)
-		}
-
 		log.Error(err, "failed to retrieve certificate request")
 
-		return reconcile.Result{}, err
+		return reconcile.Result{}, client.IgnoreNotFound(err)
 	}
 
 	if cr.Spec.IssuerRef.Group != "" && cr.Spec.IssuerRef.Group != v1.GroupVersion.Group {
 		log.V(4).Info("resource does not specify an issuerRef group name that we are responsible for", "group", cr.Spec.IssuerRef.Group)
-
 		return reconcile.Result{}, nil
 	}
 
@@ -115,34 +109,8 @@ func (r *CertificateRequestController) Reconcile(ctx context.Context, req reconc
 		return reconcile.Result{}, nil
 	}
 
-	iss := v1.OriginIssuer{}
-	issNamespaceName := types.NamespacedName{
-		Namespace: req.Namespace,
-		Name:      cr.Spec.IssuerRef.Name,
-	}
-
-	if err := r.Client.Get(ctx, issNamespaceName, &iss); err != nil {
-		log.Error(err, "failed to retrieve OriginIssuer resource", "namespace", issNamespaceName.Namespace, "name", issNamespaceName.Name)
-		_ = r.setStatus(ctx, cr, cmmeta.ConditionFalse, certmanager.CertificateRequestReasonPending, fmt.Sprintf("Failed to retrieve OriginIssuer resource %s: %v", issNamespaceName, err))
-
-		return reconcile.Result{}, err
-	}
-
-	if !IssuerHasCondition(iss, v1.OriginIssuerCondition{Type: v1.ConditionReady, Status: v1.ConditionTrue}) {
-		err := fmt.Errorf("resource %s is not ready", issNamespaceName)
-		log.Error(err, "issuer failed readiness checks", "namespace", issNamespaceName.Namespace, "name", issNamespaceName.Name)
-		_ = r.setStatus(ctx, cr, cmmeta.ConditionFalse, certmanager.CertificateRequestReasonPending, fmt.Sprintf("OriginIssuer %s is not Ready", issNamespaceName))
-
-		return reconcile.Result{}, err
-	}
-
-	p, ok := r.Collection.Load(issNamespaceName)
-	if !ok {
-		err := fmt.Errorf("provisioner %s not found", issNamespaceName)
-		log.Error(err, "failed to load provisioner for OriginIssuer resource")
-
-		_ = r.setStatus(ctx, cr, cmmeta.ConditionFalse, certmanager.CertificateRequestReasonPending, fmt.Sprintf("Failed to load provisioner for OriginIssuer resource %s", issNamespaceName))
-
+	p, err := r.getProvisioner(cr, req, log, ctx)
+	if err != nil {
 		return reconcile.Result{}, err
 	}
 
@@ -158,6 +126,53 @@ func (r *CertificateRequestController) Reconcile(ctx context.Context, req reconc
 	_ = r.setStatus(ctx, cr, cmmeta.ConditionTrue, certmanager.CertificateRequestReasonIssued, "Certificate issued")
 
 	return reconcile.Result{}, nil
+}
+
+func (r *CertificateRequestController) getProvisioner(cr *certmanager.CertificateRequest, req reconcile.Request, log logr.Logger, ctx context.Context) (*provisioners.Provisioner, error) {
+	issuer := &v1.OriginIssuer{}
+	var issNamespaceName types.NamespacedName
+	var iss CFIssuer
+
+	if cr.Spec.IssuerRef.Kind == string(issuer.GetType()) {
+		iss = &v1.OriginIssuer{}
+		issNamespaceName = types.NamespacedName{
+			Namespace: req.Namespace,
+			Name:      cr.Spec.IssuerRef.Name,
+		}
+	} else {
+		iss = &v1.OriginClusterIssuer{}
+		issNamespaceName = types.NamespacedName{
+			Name: cr.Spec.IssuerRef.Name,
+		}
+	}
+
+	if err := r.Client.Get(ctx, issNamespaceName, iss.(client.Object)); err != nil {
+		log.Error(err, "failed to retrieve OriginIssuer resource", "resource", issNamespaceName)
+		_ = r.setStatus(ctx, cr, cmmeta.ConditionFalse, certmanager.CertificateRequestReasonPending, fmt.Sprintf("Failed to retrieve %s resource %s: %v", cr.Spec.IssuerRef.Kind, issNamespaceName, err))
+
+		return nil, err
+	}
+
+	if !IssuerHasCondition(iss, v1.OriginIssuerCondition{Type: v1.ConditionReady, Status: v1.ConditionTrue}) {
+		err := fmt.Errorf("resource %s is not ready", issNamespaceName)
+		log.Error(err, "issuer failed readiness checks", "resource", issNamespaceName)
+		_ = r.setStatus(ctx, cr, cmmeta.ConditionFalse, certmanager.CertificateRequestReasonPending, fmt.Sprintf("OriginIssuer %s is not Ready", issNamespaceName))
+
+		return nil, err
+	}
+
+	p, ok := r.Collection.Load(issNamespaceName)
+
+	if !ok {
+		err := fmt.Errorf("provisioner %s not found", issNamespaceName)
+		log.Error(err, "failed to load provisioner for OriginIssuer resource")
+
+		_ = r.setStatus(ctx, cr, cmmeta.ConditionFalse, certmanager.CertificateRequestReasonPending, fmt.Sprintf("Failed to load provisioner for OriginIssuer resource %s", issNamespaceName))
+
+		return nil, err
+	}
+	return p, nil
+
 }
 
 // setStatus is a helper function to set the CertifcateRequest status condition with reason and message, and update the API.
