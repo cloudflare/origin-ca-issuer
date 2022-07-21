@@ -1,0 +1,13 @@
+# [[file:../../README.org::*Adding an OriginClusterIssuer][Adding an OriginClusterIssuer:2]]
+apiVersion: cert-manager.k8s.cloudflare.com/v1
+kind: OriginClusterIssuer
+metadata:
+  name: prod-cluster-issuer
+spec:
+  requestType: OriginECC
+  auth:
+    serviceKeyRef:
+      name: service-key
+      namespace: default
+      key: key
+# Adding an OriginClusterIssuer:2 ends here

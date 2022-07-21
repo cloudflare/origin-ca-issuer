@@ -62,9 +62,27 @@ spec:
       key: key
 #+END_SRC
 
+*** Adding an OriginClusterIssuer
+Now create an OriginIsOriginClusterIssueruer referencing the secret created above.
+
+#+BEGIN_SRC yaml :tangle ./deploy/example/clusterissuer.yaml :comments link
+apiVersion: cert-manager.k8s.cloudflare.com/v1
+kind: OriginIsOriginClusterIssueruer
+metadata:
+  name: prod-cluster-issuer
+spec:
+  requestType: OriginECC
+  auth:
+    serviceKeyRef:
+      name: service-key
+      namespace: default
+      key: key
+#+END_SRC
+
 #+BEGIN_EXAMPLE
-$ kubectl apply -f service-key.yaml -f issuer.yaml
+$ kubectl apply -f service-key.yaml -f issuer.yaml clusterissuer.yaml
 originissuer.cert-manager.k8s.cloudflare.com/prod-issuer created
+originclusterissuer.cert-manager.k8s.cloudflare.com/prod-cluster-issuer created
 secret/service-key created
 #+END_EXAMPLE
 
@@ -75,7 +93,20 @@ $ kubectl get originissuer.cert-manager.k8s.cloudflare.com prod-issuer -o json |
 [
   {
     "lastTransitionTime": "2020-10-07T00:05:00Z",
-    "message": "OriginIssuer verified an ready to sign certificates",
+    "message": "OriginIssuer verified and ready to sign certificates",
+    "reason": "Verified",
+    "status": "True",
+    "type": "Ready"
+  }
+]
+#+END_EXAMPLE
+
+#+BEGIN_EXAMPLE
+$ kubectl get originclusterissuer.cert-manager.k8s.cloudflare.com prod-cluster-issuer -o json | jq .status.conditions
+[
+  {
+    "lastTransitionTime": "2020-10-07T00:05:00Z",
+    "message": "OriginClusterIssuer verified and ready to sign certificates",
     "reason": "Verified",
     "status": "True",
     "type": "Ready"
@@ -110,6 +141,16 @@ spec:
 #+END_SRC
 
 Note that the Origin CA API has stricter limitations than the Certificate object. For example, DNS SANs must be used, IP addresses are not allowed, and further restrictions on wildcards. See the Origin CA documentation for further details.
+
+You can create a Certificate using the cluster scoped OriginClusterIssuer by changing the issuerRef to
+
+#+BEGIN_SRC yaml
+  # Reference the Origin CA ClusterIssuer you created above.  This is cluster scope, so can be used from any namespace.
+  issuerRef:
+    group: cert-manager.k8s.cloudflare.com
+    kind: OriginClusterIssuer
+    name: prod-cluster-issuer
+#+END_SRC
 
 ** Ingress Certificate
 You can use cert-manager's support for [[https://cert-manager.io/docs/usage/ingress/][Securing Ingress Resources]] along with the Origin CA Issuer to automatically create and renew certificates for Ingress resources, without needing to create a Certificate resource manually.
@@ -147,6 +188,15 @@ spec:
 #+END_SRC
 
 You may need additional annotations or =spec= fields for your specific Ingress controller.
+
+You can create a Certificate using the cluster scoped OriginClusterIssuer by changing the annotations to
+
+#+BEGIN_SRC yaml
+    # Reference the Origin CA ClusterIssuer you created above, This is cluster scope, so can be used from any namespace.
+    cert-manager.io/issuer: prod-cluster-issuer
+    cert-manager.io/issuer-kind: OriginClusterIssuer
+    cert-manager.io/issuer-group: cert-manager.k8s.cloudflare.com
+#+END_SRC
 
 ** Disable Approval Check
 The Origin Issuer will wait for CertificateRequests to have an [[https://cert-manager.io/docs/concepts/certificaterequest/#approval][approved condition set]] before signing. If using an older version of cert-manager (pre-v1.3), you can disable this check by supplying the command line flag =--disable-approved-check= to the Issuer Deployment.
