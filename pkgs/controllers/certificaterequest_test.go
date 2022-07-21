@@ -97,7 +97,7 @@ func TestCertificateRequestReconcile(t *testing.T) {
 						Name:      "foobar",
 						Namespace: "default",
 					},
-					Provisioner: (func() *provisioners.Provisioner {
+					Provisioner: func() *provisioners.Provisioner {
 						c := &fakeapi.FakeClient{
 							Response: &cfapi.SignResponse{
 								Id:          "1",
@@ -115,7 +115,7 @@ func TestCertificateRequestReconcile(t *testing.T) {
 						}
 
 						return p
-					}()),
+					}(),
 				},
 			}),
 			expected: cmapi.CertificateRequestStatus{
@@ -187,7 +187,7 @@ func TestCertificateRequestReconcile(t *testing.T) {
 					NamespacedName: types.NamespacedName{
 						Name: "foobar",
 					},
-					Provisioner: (func() *provisioners.Provisioner {
+					Provisioner: func() *provisioners.Provisioner {
 						c := &fakeapi.FakeClient{
 							Response: &cfapi.SignResponse{
 								Id:          "1",
@@ -205,7 +205,7 @@ func TestCertificateRequestReconcile(t *testing.T) {
 						}
 
 						return p
-					}()),
+					}(),
 				},
 			}),
 			expected: cmapi.CertificateRequestStatus{
