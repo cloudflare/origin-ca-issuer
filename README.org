@@ -67,7 +67,7 @@ Now create an OriginIsOriginClusterIssueruer referencing the secret created abov
 
 #+BEGIN_SRC yaml :tangle ./deploy/example/clusterissuer.yaml :comments link
 apiVersion: cert-manager.k8s.cloudflare.com/v1
-kind: OriginIsOriginClusterIssueruer
+kind: OriginClusterIssuer
 metadata:
   name: prod-cluster-issuer
 spec:
