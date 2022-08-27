@@ -56,7 +56,7 @@ The following table lists the configurable parameters of the origin-ca-issuer ch
 | `controller.podAnntoations`           | Annotations to add to the origin-ca-issuer pods                                         | `{}`                             |
 | `controller.podLabels`                | Labels to add to the origin-ca-issuer pods.                                             | `{}`                             |
 | `controller.replicaCount`             | Number of origin-ca-issuer controller replicas                                          | `1`                              |
-| `controller.featureGates`             | Comma-seperated list of feature gates to enable on the controller pold                  | `""`                             |
+| `controller.featureGates`             | Comma-seperated list of feature gates to enable on the controller pod                   | `""`                             |
 | `controller.extraArgs`                | Optional flags for origin-ca-issuer                                                     | `[]`                             |
 | `controller.extraEnv`                 | Optional environment variables for origin-ca-issuer                                     | `[]`                             |
 | `controller.serviceAccount.enable`    | If `true`, create a new service account                                                 | `true`                           |
