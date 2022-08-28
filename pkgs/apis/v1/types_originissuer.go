@@ -97,8 +97,6 @@ type OriginIssuerAuthentication struct {
 type SecretKeySelector struct {
 	// Name of the secret in the OriginIssuer's namespace to select from.
 	Name string `json:"name"`
-	// Namespace of the secret in the OriginIssuer's namespace to select from.
-	Namespace string `json:"namespace,omitempty"`
 	// Key of the secret to select from. Must be a valid secret key.
 	Key string `json:"key"`
 }
@@ -182,7 +180,7 @@ func (o *OriginIssuer) GetSecretName() string {
 }
 
 func (o *OriginIssuer) GetSecretNamespace() string {
-	return o.Spec.Auth.ServiceKeyRef.Namespace
+	return o.Namespace
 }
 
 func (o *OriginIssuer) GetSecretKey() string {
@@ -214,7 +212,7 @@ func (o *OriginClusterIssuer) GetSecretName() string {
 }
 
 func (o *OriginClusterIssuer) GetSecretNamespace() string {
-	return o.Spec.Auth.ServiceKeyRef.Namespace
+	return o.Namespace
 }
 
 func (o *OriginClusterIssuer) GetSecretKey() string {

@@ -27,6 +27,7 @@ type CFController interface {
 	getClient() client.Client
 	getCollection() *provisioners.Collection
 	getFactory() cfapi.Factory
+	getSecretNamespace(CFIssuer) string
 }
 
 var _ CFController = &OriginIssuerController{}

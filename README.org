@@ -75,7 +75,6 @@ spec:
   auth:
     serviceKeyRef:
       name: service-key
-      namespace: default
       key: key
 #+END_SRC
 

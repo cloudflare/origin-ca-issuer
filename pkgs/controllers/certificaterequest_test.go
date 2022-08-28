@@ -166,9 +166,8 @@ func TestCertificateRequestReconcile(t *testing.T) {
 					Spec: v1.OriginIssuerSpec{
 						Auth: v1.OriginIssuerAuthentication{
 							ServiceKeyRef: v1.SecretKeySelector{
-								Name:      "service-key-issuer",
-								Namespace: "default",
-								Key:       "key",
+								Name: "service-key-issuer",
+								Key:  "key",
 							},
 						},
 					},

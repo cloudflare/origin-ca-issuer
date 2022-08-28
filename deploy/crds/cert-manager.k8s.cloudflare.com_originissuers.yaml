@@ -52,10 +52,6 @@ spec:
                         description: Name of the secret in the OriginIssuer's namespace
                           to select from.
                         type: string
-                      namespace:
-                        description: Namespace of the secret in the OriginIssuer's
-                          namespace to select from.
-                        type: string
                     required:
                     - key
                     - name

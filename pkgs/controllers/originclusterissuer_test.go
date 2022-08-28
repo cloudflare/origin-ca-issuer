@@ -51,9 +51,8 @@ func TestOriginClusterIssuerReconcile(t *testing.T) {
 						RequestType: v1.RequestTypeOriginRSA,
 						Auth: v1.OriginIssuerAuthentication{
 							ServiceKeyRef: v1.SecretKeySelector{
-								Name:      "issuer-service-key",
-								Namespace: "default",
-								Key:       "key",
+								Name: "issuer-service-key",
+								Key:  "key",
 							},
 						},
 					},
@@ -94,9 +93,8 @@ func TestOriginClusterIssuerReconcile(t *testing.T) {
 						RequestType: v1.RequestTypeOriginRSA,
 						Auth: v1.OriginIssuerAuthentication{
 							ServiceKeyRef: v1.SecretKeySelector{
-								Name:      "issuer-service-key",
-								Namespace: "default",
-								Key:       "key",
+								Name: "issuer-service-key",
+								Key:  "key",
 							},
 						},
 					},
@@ -129,9 +127,8 @@ func TestOriginClusterIssuerReconcile(t *testing.T) {
 						RequestType: v1.RequestTypeOriginRSA,
 						Auth: v1.OriginIssuerAuthentication{
 							ServiceKeyRef: v1.SecretKeySelector{
-								Name:      "issuer-service-key",
-								Namespace: "default",
-								Key:       "key",
+								Name: "issuer-service-key",
+								Key:  "key",
 							},
 						},
 					},
@@ -177,9 +174,10 @@ func TestOriginClusterIssuerReconcile(t *testing.T) {
 				Factory: cfapi.FactoryFunc(func(serviceKey []byte) (cfapi.Interface, error) {
 					return nil, nil
 				}),
-				Clock:      clock,
-				Log:        logf.Log,
-				Collection: collection,
+				Clock:       clock,
+				Log:         logf.Log,
+				Collection:  collection,
+				CRNamespace: "default",
 			}
 
 			_, err := controller.Reconcile(context.Background(), reconcile.Request{

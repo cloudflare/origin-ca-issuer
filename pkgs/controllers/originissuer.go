@@ -57,3 +57,7 @@ func (r *OriginIssuerController) getCollection() *provisioners.Collection {
 func (r *OriginIssuerController) getFactory() cfapi.Factory {
 	return r.Factory
 }
+
+func (r *OriginIssuerController) getSecretNamespace(issuer CFIssuer) string {
+	return issuer.GetSecretNamespace()
+}

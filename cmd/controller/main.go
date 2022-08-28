@@ -103,11 +103,12 @@ func main() {
 		ControllerManagedBy(mgr).
 		For(&v1.OriginClusterIssuer{}).
 		Complete(&controllers.OriginClusterIssuerController{
-			Client:     mgr.GetClient(),
-			Clock:      clock.RealClock{},
-			Factory:    f,
-			Log:        log.WithName("controllers").WithName("OriginClusterIssuer"),
-			Collection: collection,
+			Client:      mgr.GetClient(),
+			Clock:       clock.RealClock{},
+			Factory:     f,
+			Log:         log.WithName("controllers").WithName("OriginClusterIssuer"),
+			Collection:  collection,
+			CRNamespace: o.CRNamespace,
 		})
 
 	if err != nil {

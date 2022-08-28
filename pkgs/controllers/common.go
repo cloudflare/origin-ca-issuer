@@ -2,7 +2,6 @@ package controllers
 
 import (
 	"context"
-	"errors"
 	"fmt"
 
 	v1 "github.com/cloudflare/origin-ca-issuer/pkgs/apis/v1"
@@ -27,17 +26,7 @@ func ReconcileCommon(r CFController, ctx context.Context, req reconcile.Request,
 		Name: iss.GetSecretName(),
 	}
 
-	if iss.GetType() == v1.OriginClusterIssuerType {
-		if iss.GetSecretNamespace() == "" {
-			err := errors.New("no namespace defined for secret")
-			log.Error(err, "unable to parse auth secret")
-			return reconcile.Result{}, err
-		}
-
-		secretNamespaceName.Namespace = iss.GetSecretNamespace()
-	} else {
-		secretNamespaceName.Namespace = req.Namespace
-	}
+	secretNamespaceName.Namespace = r.getSecretNamespace(iss)
 
 	if err := r.getClient().Get(ctx, secretNamespaceName, &secret); err != nil {
 		log.Error(err, "failed to retrieve auth secret", "namespace", secretNamespaceName.Namespace, "name", secretNamespaceName.Name)

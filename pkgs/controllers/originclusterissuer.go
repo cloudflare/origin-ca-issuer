@@ -13,10 +13,11 @@ import (
 
 type OriginClusterIssuerController struct {
 	client.Client
-	Log        logr.Logger
-	Clock      clock.Clock
-	Factory    cfapi.Factory
-	Collection *provisioners.Collection
+	Log         logr.Logger
+	Clock       clock.Clock
+	Factory     cfapi.Factory
+	Collection  *provisioners.Collection
+	CRNamespace string
 }
 
 // +kubebuilder:rbac:groups=cert-manager.k8s.cloudflare.com,resources=originclusterissuers,verbs=get;list;watch;create
@@ -51,4 +52,8 @@ func (r *OriginClusterIssuerController) getCollection() *provisioners.Collection
 
 func (r *OriginClusterIssuerController) getFactory() cfapi.Factory {
 	return r.Factory
+}
+
+func (r *OriginClusterIssuerController) getSecretNamespace(issuer CFIssuer) string {
+	return r.CRNamespace
 }
