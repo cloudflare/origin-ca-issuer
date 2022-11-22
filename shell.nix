@@ -3,7 +3,7 @@
 with pkgs;
 
 let
-  code-gen = buildGo117Module rec {
+  code-gen = buildGo119Module rec {
     pname = "code-generator";
     version = "0.24.0";
 
@@ -22,7 +22,7 @@ let
     # Go version anyways.
     allowGoReference = true;
   };
-  controller-tools = buildGo117Module rec {
+  controller-tools = buildGo119Module rec {
     pname = "controller-tools";
     version = "0.8.0";
 
@@ -39,7 +39,7 @@ let
 
 in pkgs.mkShell {
   nativeBuildInputs =
-    [ go_1_17 gopls goimports golangci-lint code-gen controller-tools ];
+    [ go_1_19 gopls gotools golangci-lint code-gen controller-tools ];
 
   TEST_ASSET_KUBE_APISERVER = "${kubernetes}/bin/kube-apiserver";
   TEST_ASSET_ETCD = "${etcd}/bin/etcd";

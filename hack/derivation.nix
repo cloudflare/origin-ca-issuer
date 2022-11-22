@@ -1,12 +1,12 @@
 { config, lib, pkgs, ... }:
 
-pkgs.buildGo117Module rec {
+pkgs.buildGo119Module rec {
   pname = "origin-ca-issuer";
   version = "0.6.1";
 
   src = lib.sourceFilesBySuffices ../. [ ".go" ".mod" ".sum" ];
 
-  vendorSha256 = "sha256-YZYR6e07kZFcGYTGYJG6ywJI2sMJBOQi8I3m3GSgIBM=";
+  vendorSha256 = "sha256-lmIWrrjAGf6hP4KtyHSwZ9i5N5DcBjNBhYeZElvfHT0=";
 
   subPackages = [ "cmd/controller" ];
 

@@ -8,12 +8,12 @@ import (
 	"testing/quick"
 	"time"
 
+	certmanager "github.com/cert-manager/cert-manager/pkg/apis/certmanager/v1"
+	cmgen "github.com/cert-manager/cert-manager/test/unit/gen"
 	"github.com/cloudflare/origin-ca-issuer/internal/cfapi"
 	v1 "github.com/cloudflare/origin-ca-issuer/pkgs/apis/v1"
 	"github.com/go-logr/logr"
 	"github.com/google/go-cmp/cmp/cmpopts"
-	certmanager "github.com/jetstack/cert-manager/pkg/apis/certmanager/v1"
-	cmgen "github.com/jetstack/cert-manager/test/unit/gen"
 	"gotest.tools/v3/assert"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
