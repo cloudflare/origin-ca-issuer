@@ -51,14 +51,19 @@ func CollectionWith(items []CollectionItem) *Collection {
 // Provisioner allows for CertificateRequests to be signed using the stored
 // Cloudflare API client.
 type Provisioner struct {
-	client cfapi.Interface
+	client Signer
 	log    logr.Logger
 
 	reqType v1.RequestType
 }
 
+// Signer implements the Origin CA signing API.
+type Signer interface {
+	Sign(ctx context.Context, req *cfapi.SignRequest) (*cfapi.SignResponse, error)
+}
+
 // New returns a new provisioner.
-func New(client cfapi.Interface, reqType v1.RequestType, log logr.Logger) (*Provisioner, error) {
+func New(client Signer, reqType v1.RequestType, log logr.Logger) (*Provisioner, error) {
 	p := &Provisioner{
 		client:  client,
 		log:     log,
@@ -106,9 +111,9 @@ func (p *Provisioner) Sign(ctx context.Context, cr *certmanager.CertificateReque
 	var reqType string
 	switch p.reqType {
 	case v1.RequestTypeOriginECC:
-		reqType = "origin-rsa"
-	case v1.RequestTypeOriginRSA:
 		reqType = "origin-ecc"
+	case v1.RequestTypeOriginRSA:
+		reqType = "origin-rsa"
 	}
 
 	resp, err := p.client.Sign(ctx, &cfapi.SignRequest{

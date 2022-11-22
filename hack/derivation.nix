@@ -6,7 +6,7 @@ pkgs.buildGo117Module rec {
 
   src = lib.sourceFilesBySuffices ../. [ ".go" ".mod" ".sum" ];
 
-  vendorSha256 = "1qr3mh1ws9ff21qs6pf7d4hf5v1aw33zailzi9r3r6dykndjkhwg";
+  vendorSha256 = "sha256-YZYR6e07kZFcGYTGYJG6ywJI2sMJBOQi8I3m3GSgIBM=";
 
   subPackages = [ "cmd/controller" ];
 
