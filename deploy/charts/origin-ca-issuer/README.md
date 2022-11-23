@@ -69,6 +69,8 @@ The following table lists the configurable parameters of the origin-ca-issuer ch
 | `controller.affinity`                 | Node (anti-)affinity for pod assignemt                                                  | `{}`                             |
 | `controller.tolerations`              | Node tolerations for pod assignment                                                     | `{}`                             |
 | `controller.disableApprovedCheck`     | Disable waiting for CertificateRequests to be Approved before signing                   | `false`                          |
+| `cert-manager.namespace `             | Namespace where the cert-manager controller is running.                                 | `cert-manager`                   |
+| `cert-manager.serviceAccountName`     | The Service Account used by the cert-manager controller.                                | `cert-manager`                   |
 
 Specify each parameter using the `--set key=value[,key=value]` argument to `helm install`.
 
