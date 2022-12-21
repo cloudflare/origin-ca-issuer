@@ -38,6 +38,16 @@ VERSION="v0.6.1"
 kubectl delete -f https://raw.githubusercontent.com/cloudflare/origin-ca-issuer/${VERSION}/deploy/crds/cert-manager.k8s.cloudflare.com_originissuers.yaml
 ```
 
+## Installing as subchart
+
+If you have configured `origin-ca-issuer` as a subchart all the components of `origin-ca-issuer`  will be installed into the namespace of the helm release you are installing.
+
+There may be a situation where you want to specify the namespace to install `origin-ca-issuer` different to the umbrella chart's namespace.
+
+This is a [known issue](https://github.com/helm/helm/issues/5358) with helm and subcharts, that you can't specify the namespace for the subchart and is being  solved by most public charts by allowing users to set the namespace via the values file, but needs to be a capability added to the chart by the maintainers.
+
+This capability is now available in the `origin-ca-issuer` chart and can be set either in the values file or via the `--set` switch. See the `namespace` parameter below.
+
 ## Configuration
 
 The following table lists the configurable parameters of the origin-ca-issuer chart and their default values.
@@ -51,8 +61,9 @@ The following table lists the configurable parameters of the origin-ca-issuer ch
 | `image.tag`                           | Image tag                                                                               | `""`                             |
 | `image.digest`                        | Image digest                                                                            | `"sha256:{{ MANIFEST_DIGEST }}"` |
 | `image.pullPolicy`                    | Image pull policy                                                                       | `Always`                         |
+| `namespace`                           | Namespace for namespaced resources used when installing as a subchart.                  | `{}`                             |
 | `controller.deploymentAnnotations`    | Annotations to add to the origin-ca-issuer deployment                                   | `{}`                             |
-| `controller.deploymentLabels`         | Labels to add to the origin-ca-issuer deployment                                        | `{}`                             |
+| `controller.deploymentLabels`         | Labels to add to the origin-ca-issuer deployment                               q        | `{}`                             |
 | `controller.podAnntoations`           | Annotations to add to the origin-ca-issuer pods                                         | `{}`                             |
 | `controller.podLabels`                | Labels to add to the origin-ca-issuer pods.                                             | `{}`                             |
 | `controller.replicaCount`             | Number of origin-ca-issuer controller replicas                                          | `1`                              |

@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: {{ template "origin-ca-issuer.fullname" . }}
-  namespace: {{ .Release.Namespace | quote }}
+  namespace: {{ include "origin-ca-issuer.namespace" . }}
   labels:
     app: {{ template "origin-ca-issuer.name" . }}
     app.kubernetes.io/name: {{ template "origin-ca-issuer.name" . }}
