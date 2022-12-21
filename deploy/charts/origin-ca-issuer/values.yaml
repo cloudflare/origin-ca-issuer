@@ -14,6 +14,11 @@ global:
   rbac:
     create: true
 
+# This namespace allows you to define where the services will be installed into
+# if not set then they will use the namespace of the release
+# This is helpful when installing cert manager as a chart dependency (sub chart)
+namespace: ""
+
 # Value specific to the origin-ca-issuer controller
 controller:
   image:
