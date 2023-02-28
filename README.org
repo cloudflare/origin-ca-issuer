@@ -109,7 +109,17 @@ spec:
     name: prod-issuer
 #+END_SRC
 
-Note that the Origin CA API has stricter limitations than the Certificate object. For example, DNS SANs must be used, IP addresses are not allowed, and further restrictions on wildcards. See the Origin CA documentation for further details.
+*Note* that the Origin CA API has stricter limitations than the Certificate object. For example, DNS SANs must be used, IP addresses are not allowed, and further restrictions on wildcards. Furthermore it only allows issuance of certificates with the following duration:
+
++ =168h= - /7 days/
++ =720h= - /30 days/
++ =2160h= - /90 days/
++ =8760h= - /1 year/
++ =17520h= - /2 years/
++ =26280h= - /3 years/
++ =131400h= - /15 years/
+
+See the [[https://developers.cloudflare.com/api/operations/origin-ca-create-certificate][Origin CA documentation]] for further details.
 
 ** Ingress Certificate
 You can use cert-manager's support for [[https://cert-manager.io/docs/usage/ingress/][Securing Ingress Resources]] along with the Origin CA Issuer to automatically create and renew certificates for Ingress resources, without needing to create a Certificate resource manually.
