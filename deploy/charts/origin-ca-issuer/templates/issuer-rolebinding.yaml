@@ -4,7 +4,6 @@ kind: ClusterRoleBinding
 metadata:
   name: {{ template "origin-ca-issuer.fullname" . }}-controller
   labels:
-    app: {{ template "origin-ca-issuer.name" . }}
     app.kubernetes.io/name: {{ template "origin-ca-issuer.name" . }}
     app.kubernetes.io/instance: {{ .Release.Name }}
     app.kubernetes.io/managed-by: {{ .Release.Service }}
@@ -26,7 +25,6 @@ kind: ClusterRoleBinding
 metadata:
   name: cert-manager-controller-approve:cert-manager-k8s-cloudflare-com
   labels:
-    app: {{ template "origin-ca-issuer.name" . }}
     app.kubernetes.io/name: {{ template "origin-ca-issuer.name" . }}
     app.kubernetes.io/instance: {{ .Release.Name }}
     app.kubernetes.io/managed-by: {{ .Release.Service }}
