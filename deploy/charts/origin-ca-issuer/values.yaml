@@ -91,3 +91,9 @@ controller:
   # Optional pod tolerations.
   # ref: https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.11/#toleration-v1-core
   tolerations: {}
+
+cert-manager:
+  # serviceAccount used by cert-manager, that will be able to approve cert-manager.k8s.cloudflare.com CertificateRequests
+  serviceAccount:
+    name: cert-manager
+    namespace: cert-manager
