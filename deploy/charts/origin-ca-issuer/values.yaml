@@ -92,6 +92,6 @@ controller:
   # ref: https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.11/#toleration-v1-core
   tolerations: {}
 
-cert-manager:
+certManager:
   namespace: cert-manager
   serviceAccountName: cert-manager
