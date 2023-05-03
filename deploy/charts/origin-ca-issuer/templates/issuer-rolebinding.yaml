@@ -38,6 +38,6 @@ roleRef:
   name: cert-manager-controller-approve:cert-manager-k8s-cloudflare-com
 subjects:
 - kind: ServiceAccount
-  name: {{ template "certManager.serviceAccountName" . }}
-  namespace: {{ template "certManager.namespace" . }}
+  name: {{ "Values.certManager.serviceAccountName" }}
+  namespace: {{ "Values.certManager.namespace" }}
 {{- end }}
