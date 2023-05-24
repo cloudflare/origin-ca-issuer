@@ -22,7 +22,7 @@ To install the chart with the release name `my-release`:
 helm install --name my-release --namespace origin-ca-issuer .
 ```
 
-In order to begin issuer certificates from the Cloudflare Origin CA you will need to setup an OriginIssuer. For more information, see the [documentation](https://github.com/cloudflare/origin-ca-issuer/blob/trunk/README.org).
+In order to begin issuing certificates from the Cloudflare Origin CA you will need to set up an OriginIssuer. For more information, see the [documentation](https://github.com/cloudflare/origin-ca-issuer/blob/trunk/README.org).
 
 ## Uninstalling the Chart
 
@@ -56,7 +56,7 @@ The following table lists the configurable parameters of the origin-ca-issuer ch
 | `controller.podAnntoations`           | Annotations to add to the origin-ca-issuer pods                                         | `{}`                             |
 | `controller.podLabels`                | Labels to add to the origin-ca-issuer pods.                                             | `{}`                             |
 | `controller.replicaCount`             | Number of origin-ca-issuer controller replicas                                          | `1`                              |
-| `controller.featureGates`             | Comma-seperated list of feature gates to enable on the controller pod                   | `""`                             |
+| `controller.featureGates`             | Comma-separated list of feature gates to enable on the controller pod                   | `""`                             |
 | `controller.extraArgs`                | Optional flags for origin-ca-issuer                                                     | `[]`                             |
 | `controller.extraEnv`                 | Optional environment variables for origin-ca-issuer                                     | `[]`                             |
 | `controller.serviceAccount.enable`    | If `true`, create a new service account                                                 | `true`                           |
@@ -66,11 +66,11 @@ The following table lists the configurable parameters of the origin-ca-issuer ch
 | `controller.securityContext`          | Optional security context. The YAML block should adhere to the SecurityContext spec     | `{}`                             |
 | `controller.containerSecurityContext` | Optional container security context                                                     | `{}`                             |
 | `controller.nodeSelector`             | Node labels for pod assignment                                                          | `{}`                             |
-| `controller.affinity`                 | Node (anti-)affinity for pod assignemt                                                  | `{}`                             |
+| `controller.affinity`                 | Node (anti-)affinity for pod assignment                                                  | `{}`                             |
 | `controller.tolerations`              | Node tolerations for pod assignment                                                     | `{}`                             |
 | `controller.disableApprovedCheck`     | Disable waiting for CertificateRequests to be Approved before signing                   | `false`                          |
-| `cert-manager.namespace `             | Namespace where the cert-manager controller is running.                                 | `cert-manager`                   |
-| `cert-manager.serviceAccountName`     | The Service Account used by the cert-manager controller.                                | `cert-manager`                   |
+| `certmanager.namespace`             | Namespace where the cert-manager controller is running.                                 | `cert-manager`                   |
+| `certmanager.serviceAccountName`     | The Service Account used by the cert-manager controller.                                | `cert-manager`                   |
 
 Specify each parameter using the `--set key=value[,key=value]` argument to `helm install`.
 
