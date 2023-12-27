@@ -53,7 +53,7 @@ func main() {
 		log.Error(err, "could not add to scheme")
 		os.Exit(1)
 	}
-	if err := v1.Install(scheme); err != nil {
+	if err := v1.AddToScheme(scheme); err != nil {
 		log.Error(err, "could not add to scheme")
 		os.Exit(1)
 	}

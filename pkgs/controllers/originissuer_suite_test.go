@@ -1,3 +1,4 @@
+//go:build suite
 // +build suite
 
 package controllers
@@ -26,6 +27,7 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/envtest"
 	logf "sigs.k8s.io/controller-runtime/pkg/log"
 	"sigs.k8s.io/controller-runtime/pkg/manager"
+	metricsserver "sigs.k8s.io/controller-runtime/pkg/metrics/server"
 )
 
 var cfg *rest.Config
@@ -37,7 +39,7 @@ func TestMain(m *testing.M) {
 		CRDDirectoryPaths: []string{filepath.Join("..", "..", "deploy", "crds")},
 	}
 	cmapi.AddToScheme(scheme.Scheme)
-	v1.Install(scheme.Scheme)
+	v1.AddToScheme(scheme.Scheme)
 
 	var err error
 	if cfg, err = t.Start(); err != nil {
@@ -76,7 +78,10 @@ func TestOriginIssuerReconcileSuite(t *testing.T) {
 	}
 
 	mgr, err := manager.New(cfg, manager.Options{
-		MetricsBindAddress: "0",
+		Metrics: metricsserver.Options{
+			BindAddress: "0",
+		},
+		Scheme: scheme.Scheme,
 	})
 	if err != nil {
 		t.Error(err)

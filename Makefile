@@ -83,3 +83,11 @@ endif
 .PHONY: lint
 lint:
 	staticcheck -tags suite ./...
+
+.PHONY: controller-gen
+controller-gen:
+	go install sigs.k8s.io/controller-tools/cmd/controller-gen
+
+.PHONY: go-generate
+go-generate: controller-gen
+	go generate -v ./...

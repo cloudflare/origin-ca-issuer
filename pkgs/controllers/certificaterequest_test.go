@@ -30,7 +30,7 @@ func TestCertificateRequestReconcile(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if err := v1.Install(scheme.Scheme); err != nil {
+	if err := v1.AddToScheme(scheme.Scheme); err != nil {
 		t.Fatal(err)
 	}
 
@@ -142,6 +142,7 @@ func TestCertificateRequestReconcile(t *testing.T) {
 			client := fake.NewClientBuilder().
 				WithScheme(scheme.Scheme).
 				WithRuntimeObjects(tt.objects...).
+				WithStatusSubresource(&cmapi.CertificateRequest{}).
 				Build()
 
 			controller := &CertificateRequestController{

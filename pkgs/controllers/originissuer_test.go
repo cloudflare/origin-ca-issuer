@@ -26,7 +26,7 @@ func TestOriginIssuerReconcile(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if err := v1.Install(scheme.Scheme); err != nil {
+	if err := v1.AddToScheme(scheme.Scheme); err != nil {
 		t.Fatal(err)
 	}
 
@@ -171,6 +171,7 @@ func TestOriginIssuerReconcile(t *testing.T) {
 			client := fake.NewClientBuilder().
 				WithScheme(scheme.Scheme).
 				WithRuntimeObjects(tt.objects...).
+				WithStatusSubresource(&v1.OriginIssuer{}).
 				Build()
 
 			collection := provisioners.CollectionWith(nil)

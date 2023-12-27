@@ -4,7 +4,7 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
-// +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object
+// +kubebuilder:object:root=true
 // +kubebuilder:subresource:status
 
 // An OriginIssuer represents the Cloudflare Origin CA as an external cert-manager issuer.
@@ -22,7 +22,7 @@ type OriginIssuer struct {
 	Status OriginIssuerStatus `json:"status,omitempty"`
 }
 
-// +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object
+// +kubebuilder:object:root=true
 
 // OriginIssuerList is a list of OriginIssuers.
 type OriginIssuerList struct {
