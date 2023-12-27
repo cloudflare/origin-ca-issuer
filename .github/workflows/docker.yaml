@@ -1,24 +1,26 @@
 name: Docker
 on:
-  push:
-    tags:
-      - 'v*'
+  - pull_request
+  - push
 jobs:
-  publish-docker:
+  docker:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - uses: nixbuild/nix-quick-install-action@v4
-      - run: nix-build ./hack/docker.nix -o docker-amd64
-      - run: nix-build ./hack/docker.nix --arg pkgs '(import ./hack/nixpkgs.nix {}).pkgsCross.aarch64-multiplatform' -o docker-arm64
-      - run: |
-          nix run -f ./hack/nixpkgs.nix pkgs.buildah<<EOF
-          buildah manifest create origin-ca-issuer
-          buildah manifest add origin-ca-issuer docker-archive:./docker-amd64
-          buildah manifest add origin-ca-issuer docker-archive:./docker-arm64
-          buildah manifest inspect origin-ca-issuer
-          buildah manifest push --all --creds ${DOCKER_HUB_USERNAME}:${DOCKER_HUB_TOKEN} -f v2s2 origin-ca-issuer docker://cloudflare/origin-ca-issuer:${GITHUB_REF#refs/tags/}
-          EOF
-        env:
-          DOCKER_HUB_USERNAME: ${{ secrets.DOCKER_HUB_USERNAME }}
-          DOCKER_HUB_TOKEN: ${{ secrets.DOCKER_HUB_TOKEN }}
+      - uses: actions/checkout@v4
+      - uses: docker/setup-qemu-action@v3
+      - uses: docker/metadata-action@v5
+        id: docker-meta
+        with:
+          images: cloudflare/origin-ca-issuer
+      - uses: docker/setup-buildx-action@v3
+      - uses: docker/login-action@v3
+        if: ${{ startsWith(github.ref, 'refs/tags/v') }}
+        with:
+          username: ${{ secrets.DOCKER_HUB_USERNAME }}
+          password: ${{ secrets.DOCKER_HUB_TOKEN }}
+      - uses: docker/build-push-action@v5
+        with:
+          file: ./cmd/controller/Dockerfile
+          platforms: linux/amd64, linux/arm64
+          tags: ${{ steps.docker-meta.outputs.tags }}
+          push: ${{ startsWith(github.ref, 'refs/tags/v') }}

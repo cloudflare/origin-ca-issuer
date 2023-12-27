@@ -1,6 +1,6 @@
 module github.com/cloudflare/origin-ca-issuer
 
-go 1.19
+go 1.20
 
 require (
 	github.com/cert-manager/cert-manager v1.9.2

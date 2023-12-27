@@ -5,22 +5,38 @@ on:
 jobs:
   unit:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        go: [ 'stable', 'oldstable' ]
+    name: 'Go ${{ matrix.go }} Test'
     steps:
-      - uses: actions/checkout@v2
-      - uses: nixbuild/nix-quick-install-action@v4
-      - run: nix-shell --pure --run "go test -v -race ./..."
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v4
+        with:
+          go-version: ${{ matrix.go }}
+      - run: make test
   lint:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - uses: nixbuild/nix-quick-install-action@v4
-      - run: nix-shell --pure --run "golangci-lint run --timeout 15m -e 'please use pkg/envtest for testing'"
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v4
+        with:
+          go-version: 'stable'
+      - uses: dominikh/staticcheck-action@v1
+        with:
+          build-tags: suite
+          install-go: false
   integration:
     needs:
       - unit
       - lint
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - uses: nixbuild/nix-quick-install-action@v4
-      - run: nix-shell --pure --run "go test ./... -tags suite"
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v4
+        with:
+          go-version: 'stable'
+      - run: |
+          go install sigs.k8s.io/controller-runtime/tools/setup-envtest@latest
+          source <(setup-envtest use -p env)
+          go test ./... -tags suite
