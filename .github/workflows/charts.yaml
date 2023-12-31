@@ -1,0 +1,45 @@
+name: Test Charts
+on:
+  - pull_request
+  - push
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+jobs:
+  chart-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: azure/setup-helm@v3
+      - uses: actions/setup-python@v4
+        with:
+          python-version: "3.11"
+          check-latest: true
+      - uses: helm/chart-testing-action@v2
+      - name: chart-testing (list-changed)
+        id: list-changed
+        run: |
+          changed=$(ct list-changed --target-branch ${{ github.event.repository.default_branch }} --chart-dirs deploy/charts)
+          if [[ -n "$changed" ]]; then
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          fi
+      - name: chart-testing (lint)
+        if: steps.list-changed.outputs.changed == 'true'
+        run: ct lint --target-branch ${{ github.event.repository.default_branch }} --chart-dirs deploy/charts --check-version-increment=false --github-groups
+      - uses: helm/kind-action@v1
+        if: steps.list-changed.outputs.changed == 'true'
+      - name: chart-testing (install)
+        if: steps.list-changed.outputs.changed == 'true' && ! startsWith(github.ref, 'refs/tags/v')
+        run: |
+          kubectl apply -f https://github.com/cert-manager/cert-manager/releases/download/v1.13.3/cert-manager.crds.yaml
+          kubectl apply -f ./deploy/crds
+          ct install --target-branch ${{ github.event.repository.default_branch }} --chart-dirs deploy/charts --github-groups
+      - name: helm package
+        run: helm package deploy/charts/origin-ca-issuer
+      - name: helm publish
+        if: ${{ startsWith(github.ref, 'refs/tags/v') }}
+        run: |
+          echo ${{ secrets.GITHUB_TOKEN }} | helm registry login -u ${{ github.actor }} --password-stdin ghcr.io
+          helm push origin-ca-issuer-*.tgz oci://ghcr.io/cloudflare/origin-ca-issuer-charts
