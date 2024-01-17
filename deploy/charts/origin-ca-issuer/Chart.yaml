@@ -1,8 +1,8 @@
 apiVersion: v2
 type: application
 name: origin-ca-issuer
-version: 0.5.1
-appVersion: 0.6.1
+version: 0.5.2
+appVersion: 0.7.0
 description: A Helm chart for origin-ca-issuer
 home: https://github.com/cloudflare/origin-ca-issuer
 maintainers:

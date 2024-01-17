@@ -36,11 +36,3 @@ jobs:
           kubectl apply -f https://github.com/cert-manager/cert-manager/releases/download/v1.13.3/cert-manager.crds.yaml
           kubectl apply -f ./deploy/crds
           ct install --target-branch ${{ github.event.repository.default_branch }} --chart-dirs deploy/charts --github-groups
-      - name: helm package
-        if: steps.list-changed.outputs.changed == 'true'
-        run: helm package deploy/charts/origin-ca-issuer
-      - name: helm publish
-        if: steps.list-changed.outputs.changed == 'true' && (github.event_name == 'push' && github.ref_name == github.event.repository.default_branch)
-        run: |
-          echo ${{ secrets.GITHUB_TOKEN }} | helm registry login -u ${{ github.actor }} --password-stdin ghcr.io
-          helm push origin-ca-issuer-*.tgz oci://ghcr.io/cloudflare/origin-ca-issuer-charts

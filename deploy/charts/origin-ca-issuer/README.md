@@ -12,14 +12,14 @@ origin-ca-issuer is a Kubernetes addon to automate issuance and renewals of Clou
 Before installing the chart, you must first install [cert-manager](https://cert-manager.io/docs/installation/), and the origin-ca-issuer CustomResourceDefinition resources.
 
 ```shell
-VERSION="v0.6.1"
+VERSION="v0.7.0"
 kubectl apply -f https://raw.githubusercontent.com/cloudflare/origin-ca-issuer/${VERSION}/deploy/crds/cert-manager.k8s.cloudflare.com_originissuers.yaml
 ```
 
 To install the chart with the release name `my-release`:
 
 ``` shell
-helm install --name my-release --namespace origin-ca-issuer .
+helm install --name my-release oci://ghcr.io/cloudflare/origin-ca-issuer-charts/origin-ca-issuer --version 0.5.2
 ```
 
 In order to begin issuing certificates from the Cloudflare Origin CA you will need to set up an OriginIssuer. For more information, see the [documentation](https://github.com/cloudflare/origin-ca-issuer/blob/trunk/README.org).
@@ -34,7 +34,7 @@ helm delete my-release
 If you want to completely uninstall origin-ca-issuer from your cluster, you also need to delete the previously installed CustomResourceDefinition resources:
 
 ``` shell
-VERSION="v0.6.1"
+VERSION="v0.7.0"
 kubectl delete -f https://raw.githubusercontent.com/cloudflare/origin-ca-issuer/${VERSION}/deploy/crds/cert-manager.k8s.cloudflare.com_originissuers.yaml
 ```
 
@@ -66,18 +66,18 @@ The following table lists the configurable parameters of the origin-ca-issuer ch
 | `controller.securityContext`          | Optional security context. The YAML block should adhere to the SecurityContext spec     | `{}`                             |
 | `controller.containerSecurityContext` | Optional container security context                                                     | `{}`                             |
 | `controller.nodeSelector`             | Node labels for pod assignment                                                          | `{}`                             |
-| `controller.affinity`                 | Node (anti-)affinity for pod assignment                                                  | `{}`                             |
+| `controller.affinity`                 | Node (anti-)affinity for pod assignment                                                 | `{}`                             |
 | `controller.tolerations`              | Node tolerations for pod assignment                                                     | `{}`                             |
 | `controller.disableApprovedCheck`     | Disable waiting for CertificateRequests to be Approved before signing                   | `false`                          |
-| `certmanager.namespace`             | Namespace where the cert-manager controller is running.                                 | `cert-manager`                   |
-| `certmanager.serviceAccountName`     | The Service Account used by the cert-manager controller.                                | `cert-manager`                   |
+| `certmanager.namespace`               | Namespace where the cert-manager controller is running.                                 | `cert-manager`                   |
+| `certmanager.serviceAccountName`      | The Service Account used by the cert-manager controller.                                | `cert-manager`                   |
 
 Specify each parameter using the `--set key=value[,key=value]` argument to `helm install`.
 
 Alternatively, a YAML value that specifies the values for the above parameters can be provided while installing the chart. For example.
 
 ``` shell
-helm install --name my-release -f values.yaml .
+helm install --name my-release -f values.yaml oci://ghcr.io/cloudflare/origin-ca-issuer-charts/origin-ca-issuer --version 0.5.2
 ```
 
 ## Contributing

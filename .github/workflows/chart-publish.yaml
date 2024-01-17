@@ -1,0 +1,24 @@
+name: Publish Charts
+on:
+  push:
+    branches:
+      - trunk
+    paths:
+      - deploy/charts/origin-ca-issuer/Chart.yaml
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+jobs:
+  chart-publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: azure/setup-helm@v3
+      - name: helm package
+        run: helm package deploy/charts/origin-ca-issuer
+      - name: helm publish
+        run: |
+          echo ${{ secrets.GITHUB_TOKEN }} | helm registry login -u ${{ github.actor }} --password-stdin ghcr.io
+          helm push origin-ca-issuer-*.tgz oci://ghcr.io/cloudflare/origin-ca-issuer-charts
