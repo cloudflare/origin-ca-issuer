@@ -80,6 +80,7 @@ func TestSign(t *testing.T) {
 	}{
 		{name: "API success",
 			handler: http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+				w.Header().Add("cf-ray", "0123456789abcdef-ABC")
 				fmt.Fprintln(w, `{
 	"success": true,
 	"errors": [],
@@ -109,6 +110,7 @@ func TestSign(t *testing.T) {
 		{
 			name: "API error",
 			handler: http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+				w.Header().Add("cf-ray", "0123456789abcdef-ABC")
 				fmt.Fprintln(w, `{
 	"success": false,
 	"errors": [{"code": 9001, "message": "Over Nine Thousand!"}],
@@ -117,7 +119,7 @@ func TestSign(t *testing.T) {
 }`)
 			}),
 			response: nil,
-			error:    "Cloudflare API Error code=9001 message=Over Nine Thousand!",
+			error:    "Cloudflare API Error code=9001 message=Over Nine Thousand! ray_id=0123456789abcdef-ABC",
 		},
 	}
 

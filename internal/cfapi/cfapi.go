@@ -82,10 +82,11 @@ type APIResponse struct {
 type APIError struct {
 	Code    int    `json:"code"`
 	Message string `json:"message"`
+	RayID   string `json:"-"`
 }
 
 func (a *APIError) Error() string {
-	return fmt.Sprintf("Cloudflare API Error code=%d message=%s", a.Code, a.Message)
+	return fmt.Sprintf("Cloudflare API Error code=%d message=%s ray_id=%s", a.Code, a.Message, a.RayID)
 }
 
 func (c *Client) Sign(ctx context.Context, req *SignRequest) (*SignResponse, error) {
@@ -108,13 +109,17 @@ func (c *Client) Sign(ctx context.Context, req *SignRequest) (*SignResponse, err
 	}
 	defer resp.Body.Close()
 
+	rayID := resp.Header.Get("CF-Ray")
+
 	api := APIResponse{}
 	if err := json.NewDecoder(resp.Body).Decode(&api); err != nil {
 		return nil, err
 	}
 
 	if !api.Success {
-		return nil, &api.Errors[0]
+		err := &api.Errors[0]
+		err.RayID = rayID
+		return nil, err
 	}
 
 	signResp := SignResponse{}
