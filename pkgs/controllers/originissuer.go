@@ -34,15 +34,8 @@ type OriginIssuerController struct {
 // +kubebuilder:rbac:groups="",resources=events,verbs=create;patch
 
 // Reconcile reconciles OriginIssuer resources by managing Cloudflare API provisioners.
-func (r *OriginIssuerController) Reconcile(ctx context.Context, req reconcile.Request) (reconcile.Result, error) {
-	log := r.Log.WithValues("originissuer", req.NamespacedName)
-
-	iss := &v1.OriginIssuer{}
-	if err := r.Client.Get(ctx, req.NamespacedName, iss); err != nil {
-		log.Error(err, "failed to retrieve OriginIssuer")
-
-		return reconcile.Result{}, client.IgnoreNotFound(err)
-	}
+func (r *OriginIssuerController) Reconcile(ctx context.Context, iss *v1.OriginIssuer) (reconcile.Result, error) {
+	log := r.Log.WithValues("namespace", iss.Namespace, "originissuer", iss.Name)
 
 	if err := validateOriginIssuer(iss.Spec); err != nil {
 		log.Error(err, "failed to validate OriginIssuer resource")
@@ -52,7 +45,7 @@ func (r *OriginIssuerController) Reconcile(ctx context.Context, req reconcile.Re
 
 	secret := core.Secret{}
 	secretNamespaceName := types.NamespacedName{
-		Namespace: req.Namespace,
+		Namespace: iss.Namespace,
 		Name:      iss.Spec.Auth.ServiceKeyRef.Name,
 	}
 
@@ -94,7 +87,7 @@ func (r *OriginIssuerController) Reconcile(ctx context.Context, req reconcile.Re
 	}
 
 	// TODO: GC these references once the OriginIssuer has been removed.
-	r.Collection.Store(req.NamespacedName, p)
+	r.Collection.Store(types.NamespacedName{Name: iss.Name, Namespace: iss.Namespace}, p)
 
 	return reconcile.Result{}, r.setStatus(ctx, iss, v1.ConditionTrue, "Verified", "OriginIssuer verified and ready to sign certificates")
 }

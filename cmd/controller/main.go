@@ -22,6 +22,7 @@ import (
 	logf "sigs.k8s.io/controller-runtime/pkg/log"
 	"sigs.k8s.io/controller-runtime/pkg/manager"
 	"sigs.k8s.io/controller-runtime/pkg/manager/signals"
+	"sigs.k8s.io/controller-runtime/pkg/reconcile"
 )
 
 func main() {
@@ -87,13 +88,13 @@ func main() {
 	err = builder.
 		ControllerManagedBy(mgr).
 		For(&v1.OriginIssuer{}).
-		Complete(&controllers.OriginIssuerController{
+		Complete(reconcile.AsReconciler(mgr.GetClient(), &controllers.OriginIssuerController{
 			Client:     mgr.GetClient(),
 			Clock:      clock.RealClock{},
 			Factory:    f,
 			Log:        log.WithName("controllers").WithName("OriginIssuer"),
 			Collection: collection,
-		})
+		}))
 
 	if err != nil {
 		log.Error(err, "could not create origin issuer controller")
@@ -103,14 +104,14 @@ func main() {
 	err = builder.
 		ControllerManagedBy(mgr).
 		For(&certmanager.CertificateRequest{}).
-		Complete(&controllers.CertificateRequestController{
+		Complete(reconcile.AsReconciler(mgr.GetClient(), &controllers.CertificateRequestController{
 			Client:     mgr.GetClient(),
 			Log:        log.WithName("controllers").WithName("CertificateRequest"),
 			Collection: collection,
 
 			Clock:                  clock.RealClock{},
 			CheckApprovedCondition: !o.DisableApprovedCheck,
-		})
+		}))
 
 	if err != nil {
 		log.Error(err, "could not create certificaterequest controller")

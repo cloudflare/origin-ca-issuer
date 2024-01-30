@@ -28,6 +28,7 @@ import (
 	logf "sigs.k8s.io/controller-runtime/pkg/log"
 	"sigs.k8s.io/controller-runtime/pkg/manager"
 	metricsserver "sigs.k8s.io/controller-runtime/pkg/metrics/server"
+	"sigs.k8s.io/controller-runtime/pkg/reconcile"
 )
 
 var cfg *rest.Config
@@ -102,7 +103,7 @@ func TestOriginIssuerReconcileSuite(t *testing.T) {
 
 	builder.ControllerManagedBy(mgr).
 		For(&v1.OriginIssuer{}).
-		Complete(controller)
+		Complete(reconcile.AsReconciler(c, controller))
 
 	cancel, errChan := StartTestManager(mgr, t)
 	defer func() {

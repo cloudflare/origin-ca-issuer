@@ -10,7 +10,6 @@ import (
 	v1 "github.com/cloudflare/origin-ca-issuer/pkgs/apis/v1"
 	"github.com/cloudflare/origin-ca-issuer/pkgs/provisioners"
 	"github.com/go-logr/logr"
-	apierrors "k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/types"
 	"k8s.io/utils/clock"
@@ -34,19 +33,8 @@ type CertificateRequestController struct {
 
 // Reconcile reconciles CertificateRequest by fetching a Cloudflare API provisioner from
 // the referenced OriginIssuer, and providing the request's CSR.
-func (r *CertificateRequestController) Reconcile(ctx context.Context, req reconcile.Request) (reconcile.Result, error) {
-	log := r.Log.WithValues("certificaterequest", req.NamespacedName)
-
-	cr := &certmanager.CertificateRequest{}
-	if err := r.Client.Get(ctx, req.NamespacedName, cr); err != nil {
-		if apierrors.IsNotFound(err) {
-			return reconcile.Result{}, client.IgnoreNotFound(err)
-		}
-
-		log.Error(err, "failed to retrieve certificate request")
-
-		return reconcile.Result{}, err
-	}
+func (r *CertificateRequestController) Reconcile(ctx context.Context, cr *certmanager.CertificateRequest) (reconcile.Result, error) {
+	log := r.Log.WithValues("namespace", cr.Namespace, "certificaterequest", cr.Name)
 
 	if cr.Spec.IssuerRef.Group != "" && cr.Spec.IssuerRef.Group != v1.GroupVersion.Group {
 		log.V(4).Info("resource does not specify an issuerRef group name that we are responsible for", "group", cr.Spec.IssuerRef.Group)
@@ -117,7 +105,7 @@ func (r *CertificateRequestController) Reconcile(ctx context.Context, req reconc
 
 	iss := v1.OriginIssuer{}
 	issNamespaceName := types.NamespacedName{
-		Namespace: req.Namespace,
+		Namespace: cr.Namespace,
 		Name:      cr.Spec.IssuerRef.Name,
 	}
 

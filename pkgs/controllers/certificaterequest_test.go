@@ -151,7 +151,7 @@ func TestCertificateRequestReconcile(t *testing.T) {
 				Collection: tt.collection,
 			}
 
-			_, err := controller.Reconcile(context.Background(), reconcile.Request{
+			_, err := reconcile.AsReconciler(client, controller).Reconcile(context.Background(), reconcile.Request{
 				NamespacedName: tt.namespaceName,
 			})
 
