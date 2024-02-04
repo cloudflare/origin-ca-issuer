@@ -4,7 +4,6 @@ metadata:
   name: {{ template "origin-ca-issuer.fullname" . }}
   namespace: {{ .Release.Namespace | quote }}
   labels:
-    app: {{ template "origin-ca-issuer.name" . }}
     app.kubernetes.io/name: {{ template "origin-ca-issuer.name" . }}
     app.kubernetes.io/instance: {{ .Release.Name }}
     app.kubernetes.io/managed-by: {{ .Release.Service }}
@@ -29,7 +28,6 @@ spec:
   template:
     metadata:
       labels:
-        app: {{ template "origin-ca-issuer.name" . }}
         app.kubernetes.io/name: {{ template "origin-ca-issuer.name" . }}
         app.kubernetes.io/instance: {{ .Release.Name }}
         app.kubernetes.io/component: "controller"
