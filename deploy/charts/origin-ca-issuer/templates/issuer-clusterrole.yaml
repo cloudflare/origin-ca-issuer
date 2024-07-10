@@ -51,4 +51,5 @@ rules:
     - approve
     resourceNames:
     - originissuers.cert-manager.k8s.cloudflare.com/*
+    - clusteroriginissuers.cert-manager.k8s.cloudflare.com/*
 {{- end }}
