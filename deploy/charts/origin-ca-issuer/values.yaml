@@ -90,7 +90,7 @@ controller:
 
   # Optional pod (anti-)affinities.
   # ref: https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.11/#affinity-v1-core
-  affinity: {}
+  affinity: []
 
   # Optional pod tolerations.
   # ref: https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.11/#toleration-v1-core
