@@ -94,6 +94,10 @@ controller:
 
   # Optional pod tolerations.
   # ref: https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.11/#toleration-v1-core
+  #   tolerations:
+  #     - key: "CriticalAddonsOnly"
+  #       operator: "Exists"
+  #       effect: "NoSchedule"
   tolerations: []
 
 certmanager:
