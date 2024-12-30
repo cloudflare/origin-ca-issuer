@@ -14,6 +14,14 @@ global:
   rbac:
     create: true
 
+#  Optional create a secret for key / token to authenticate with Cloudflare API
+  # secretKeyRef:
+  #   name: secret-name
+  #   key: secret-key
+  #   value: secret-value-within-key
+  secretKeyRef: []
+
+
 # Value specific to the origin-ca-issuer controller
 controller:
   image:
@@ -99,6 +107,16 @@ controller:
   #       operator: "Exists"
   #       effect: "NoSchedule"
   tolerations: []
+
+  # Optional issue Cloudflare certificates as an external cert-manager issuer (apiVersion cert-manager.k8s.cloudflare.com/v1)
+  # originIssuer:
+  #   nameIssuerOverride: defaults to chart name
+  #   requestTypes: OriginECC or OriginRSA (default OriginECC)
+  #   auth: configures settings for authentication with the Cloudflare API
+  #     type: serviceKeyRef or tokenRef (default serviceKeyRef)
+  #     secretName: reference to name of secret within namespace, defaults to globa.secretKeyRef.name
+  #     secretKey: reference to key within secret defaults to global.secretKeyRef.key
+  originIssuer: []
 
 certmanager:
   namespace: cert-manager

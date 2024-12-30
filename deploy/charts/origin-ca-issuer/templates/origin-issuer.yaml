@@ -1,0 +1,25 @@
+{{- if .Values.controller.originIssuer -}}
+apiVersion: cert-manager.k8s.cloudflare.com/v1
+kind: OriginIssuer
+metadata:
+  name: {{ template "origin-ca-issuer.controller.originIssuer" . }}
+  namespace: {{ .Release.Namespace | quote }}
+  labels:
+    app: {{ include "origin-ca-issuer.name" . }}
+    app.kubernetes.io/name: {{ include "origin-ca-issuer.name" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}  
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+    app.kubernetes.io/component: "controller"
+    helm.sh/chart: {{ template "origin-ca-issuer.chart" . }}  
+spec:
+  requestType: {{ default "OriginECC" .Values.controller.originIssuer.requestType }}
+  auth:
+  {{ default "ServiceKeyRef" .Values.controller.originIssuer.auth.type | indent 2 }}:
+{{- if .Values.global.secretKeyRef }}
+      name: {{ .Values.global.secretKeyRef.name }}
+      key: {{ .Values.global.secretKeyRef.key }}
+{{- else }}
+      name: {{ required "Reference to secret is required" .Values.controller.originIssuer.auth.secretName }}
+      key: {{ required "Reference to key is required" .Values.controller.originIssuer.auth.secretKey }}
+{{- end }}
+{{- end -}}

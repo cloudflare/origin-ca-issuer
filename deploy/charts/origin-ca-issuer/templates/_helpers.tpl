@@ -40,3 +40,7 @@ Create the name of the service account to use
     {{ default "default" .Values.controller.serviceAccount.name }}
 {{- end -}}
 {{- end -}}
+
+{{- define "origin-ca-issuer.controller.originIssuer" -}}
+{{- default .Chart.Name .Values.controller.originIssuer.nameIssuerOverride | trunc 63 | trimSuffix "-" -}}
+{{- end -}}

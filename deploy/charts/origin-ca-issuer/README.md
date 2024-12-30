@@ -51,6 +51,7 @@ The following table lists the configurable parameters of the origin-ca-issuer ch
 | `image.tag`                           | Image tag                                                                               | `""`                                                                           |
 | `image.digest`                        | Image digest                                                                            | `"sha256:{{ MANIFEST_DIGEST }}"`                                               |
 | `image.pullPolicy`                    | Image pull policy                                                                       | `Always`                                                                       |
+| `global.secretKeyRef`                 | Create secret for authentication with Cloudflare (refer to OriginIssuer)                | `[]`                                                                           |
 | `controller.deploymentAnnotations`    | Annotations to add to the origin-ca-issuer deployment                                   | `{}`                                                                           |
 | `controller.deploymentLabels`         | Labels to add to the origin-ca-issuer deployment                                        | `{}`                                                                           |
 | `controller.podAnntoations`           | Annotations to add to the origin-ca-issuer pods                                         | `{}`                                                                           |
@@ -71,6 +72,7 @@ The following table lists the configurable parameters of the origin-ca-issuer ch
 | `controller.disableApprovedCheck`     | Disable waiting for CertificateRequests to be Approved before signing                   | `false`                                                                        |
 | `controller.clusterResourceNamespace` | Override the namespace used for ClusterOriginIssuer secrets                             | `""`                                                                           |
 | `controller.resources`                | The resource request and limits.                                                        | `{requests: {cpu: "1", memory: "512Mi"}, limits: {cpu: "1", memory: "512Mi"}}` |
+| `controller.originIssuer`             | Issue Cloudflare certificates as an external cert-manager issuer                        | `[]`                                                                           |
 | `certmanager.namespace`               | Namespace where the cert-manager controller is running.                                 | `cert-manager`                                                                 |
 | `certmanager.serviceAccountName`      | The Service Account used by the cert-manager controller.                                | `cert-manager`                                                                 |
 
