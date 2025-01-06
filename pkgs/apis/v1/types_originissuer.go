@@ -82,7 +82,7 @@ type OriginIssuerStatus struct {
 // OriginIssuerAuthentication defines how to authenticate with the Cloudflare API.
 // Only one of `serviceKeyRef` may be specified.
 type OriginIssuerAuthentication struct {
-	// ServiceKeyRef authenticates with an API Service Key.
+	// ServiceKeyRef authenticates with an API Service Key (the "Origin CA Key").
 	// +optional
 	ServiceKeyRef *SecretKeySelector `json:"serviceKeyRef,omitempty"`
 

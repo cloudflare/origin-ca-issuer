@@ -39,7 +39,7 @@ pod/origin-ca-issuer-1234568-abcdw  1/1     Running     0           1m
 
 *** Adding an OriginIssuer
 **** API Token
-Origin CA Issuer can use an [[https://dash.cloudflare.com/profile/api-tokens][API Token]] that contains the "SSL and Certificates" permission, which can be scoped to specific accounts or zones.
+Origin CA Issuer can use an API token that contains the "Zone / SSL and Certificates / Edit" permission, which can be scoped to specific accounts or zones. Both [[https://developers.cloudflare.com/fundamentals/api/get-started/create-token/][user API tokens]] and [[https://developers.cloudflare.com/fundamentals/api/get-started/account-owned-tokens/][Account owned tokens]] are supported.
 
 #+BEGIN_SRC sh :file ./deploy/example/cfapi-token.secret.yaml :results silent file :exports code
 kubectl create secret generic \
@@ -86,7 +86,7 @@ $ kubectl get originissuer.cert-manager.k8s.cloudflare.com prod-issuer -o json |
 #+END_EXAMPLE
 
 **** Origin CA Service Key
-Alternatively, the "Origin CA Key" can be used, also found on the API Tokens page. This key will begin with "v1.0-" and is different from the "Global API Key".
+The [[https://developers.cloudflare.com/fundamentals/api/get-started/ca-keys/][Origin CA Key]] is supported but discouraged in favor of API tokens. This key will begin with "v1.0-" and is different from the legacy "Global API Key".
 
 #+BEGIN_SRC sh :file ./deploy/example/service-key.secret.yaml :results silent file :exports code
 kubectl create secret generic \

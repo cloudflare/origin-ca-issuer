@@ -47,7 +47,8 @@ spec:
                   API.
                 properties:
                   serviceKeyRef:
-                    description: ServiceKeyRef authenticates with an API Service Key.
+                    description: ServiceKeyRef authenticates with an API Service Key
+                      (the "Origin CA Key").
                     properties:
                       key:
                         description: Key of the secret to select from. Must be a valid
