@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"context"
+	"embed"
 	"errors"
 	"fmt"
 
@@ -19,6 +20,14 @@ import (
 	"k8s.io/utils/clock"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 	"sigs.k8s.io/controller-runtime/pkg/reconcile"
+)
+
+//go:embed certificates
+var certificateFS embed.FS
+
+var (
+	rsaCAPEM = MustReadFile("certificates/origin_ca_rsa_root.pem", certificateFS)
+	eccCAPEM = MustReadFile("certificates/origin_ca_ecc_root.pem", certificateFS)
 )
 
 const originDBWriteErrorCode = 1100
@@ -266,6 +275,12 @@ func (r *CertificateRequestController) Reconcile(ctx context.Context, cr *certma
 	}
 
 	cr.Status.Certificate = pem
+	switch issuerspec.RequestType {
+	case v1.RequestTypeOriginECC:
+		cr.Status.CA = eccCAPEM
+	case v1.RequestTypeOriginRSA:
+		cr.Status.CA = rsaCAPEM
+	}
 	_ = r.setStatus(ctx, cr, cmmeta.ConditionTrue, certmanager.CertificateRequestReasonIssued, "Certificate issued")
 
 	return reconcile.Result{}, nil
@@ -276,4 +291,12 @@ func (r *CertificateRequestController) setStatus(ctx context.Context, cr *certma
 	cmutil.SetCertificateRequestCondition(cr, certmanager.CertificateRequestConditionReady, status, reason, message)
 
 	return r.Client.Status().Update(ctx, cr)
+}
+
+func MustReadFile(filename string, fs embed.FS) []byte {
+	b, err := fs.ReadFile(filename)
+	if err != nil {
+		panic(err)
+	}
+	return b
 }

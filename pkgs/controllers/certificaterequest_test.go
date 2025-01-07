@@ -106,6 +106,7 @@ func TestCertificateRequestReconcile(t *testing.T) {
 					},
 				},
 				Certificate: golden.Get(t, "certificate.golden"),
+				CA:          eccCAPEM,
 			},
 			namespaceName: types.NamespacedName{
 				Namespace: "default",
@@ -169,6 +170,7 @@ func TestCertificateRequestReconcile(t *testing.T) {
 					},
 				},
 				Certificate: golden.Get(t, "certificate.golden"),
+				CA:          eccCAPEM,
 			},
 			namespaceName: types.NamespacedName{
 				Namespace: "default",
@@ -233,6 +235,7 @@ func TestCertificateRequestReconcile(t *testing.T) {
 					},
 				},
 				Certificate: golden.Get(t, "certificate.golden"),
+				CA:          eccCAPEM,
 			},
 			namespaceName: types.NamespacedName{
 				Namespace: "default",
@@ -296,6 +299,7 @@ func TestCertificateRequestReconcile(t *testing.T) {
 					},
 				},
 				Certificate: golden.Get(t, "certificate.golden"),
+				CA:          eccCAPEM,
 			},
 			namespaceName: types.NamespacedName{
 				Namespace: "default",
