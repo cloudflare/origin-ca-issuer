@@ -20,6 +20,7 @@ jobs:
         with:
           fetch-depth: 0
       - uses: azure/setup-helm@v3
+      - uses: sigstore/cosign-installer@v3
       - name: helm package
         run: helm package deploy/charts/origin-ca-issuer
       - uses: docker/login-action@v3
