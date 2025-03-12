@@ -32,4 +32,4 @@ jobs:
         run: |
           helm push origin-ca-issuer-*.tgz oci://ghcr.io/cloudflare/origin-ca-issuer-charts |& tee helm-push-output.log
           digest=$(awk -F "[, ]+" '/Digest/{print $NF}' < helm-push-output.log)
-          cosign sign "ghcr.io/cloudflare/origin-ca-issuer-charts/origin-ca-issuer@${digest}"
+          cosign sign --yes "ghcr.io/cloudflare/origin-ca-issuer-charts/origin-ca-issuer@${digest}"
