@@ -81,7 +81,17 @@ spec:
             {{- if .Values.controller.extraEnv }}
 {{ toYaml .Values.controller.extraEnv | indent 12 }}
             {{- end }}
-          resources: {{ toYaml .Values.controller.resources | nindent 12 }}
+          resources:
+          {{- if .Values.controller.resources }}
+{{ toYaml .Values.controller.resources | indent 12 }}
+          {{- else }}
+            requests:
+              cpu: "1"
+              memory: 512Mi
+            limits:
+              cpu: "1"
+              memory: 512Mi
+          {{- end }}
       {{- with .Values.controller.nodeSelector }}
       nodeSelector: {{ toYaml . | nindent 8 }}
       {{- end }}
