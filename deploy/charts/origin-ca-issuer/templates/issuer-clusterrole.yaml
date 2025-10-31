@@ -37,7 +37,7 @@ rules:
     verbs: ["patch"]
   - apiGroups: ["coordination.k8s.io"]
     resources: ["leases"]
-    verbs: ["get", "list", "watch", "create", "update", "patch"]
+    verbs: ["create", "get", "update"]
   - apiGroups: ["certificates.k8s.io"]
     resources: ["signers"]
     resourceNames: ["clusteroriginissuers.cert-manager.k8s.cloudflare.com/*", "originissuers.cert-manager.k8s.cloudflare.com/*"]
