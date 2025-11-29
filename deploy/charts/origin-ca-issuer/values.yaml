@@ -17,7 +17,7 @@ global:
 # Value specific to the origin-ca-issuer controller
 controller:
   image:
-    repository: cloudflare/origin-ca-issuer
+    repository: docker.io/cloudflare/origin-ca-issuer
     tag: v0.13.0
     pullPolicy: Always
 
