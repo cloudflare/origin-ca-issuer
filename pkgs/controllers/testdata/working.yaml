@@ -18,7 +18,7 @@ interactions:
         User-Agent:
           - origin-ca-issuer/0.0.0
         X-Auth-User-Service-Key:
-          - djEuMC0weDAwQkFCMTBD
+          - v1.0-0x00BAB10C
       url: https://api.cloudflare.com/client/v4/certificates
       method: POST
     response:

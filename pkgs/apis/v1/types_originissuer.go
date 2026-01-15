@@ -1,6 +1,7 @@
 package v1
 
 import (
+	issuerv1alpha1 "github.com/cert-manager/issuer-lib/api/v1alpha1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
@@ -19,7 +20,7 @@ type OriginIssuer struct {
 
 	// Status of the OriginIssuer. This is set and managed automatically.
 	// +optional
-	Status OriginIssuerStatus `json:"status,omitempty"`
+	Status issuerv1alpha1.IssuerStatus `json:"status,omitempty"`
 }
 
 // +kubebuilder:object:root=true
@@ -48,7 +49,7 @@ type ClusterOriginIssuer struct {
 
 	// Status of the ClusterOriginIssuer. This is set and managed automatically.
 	// +optional
-	Status OriginIssuerStatus `json:"status,omitempty"`
+	Status issuerv1alpha1.IssuerStatus `json:"status,omitempty"`
 }
 
 // +kubebuilder:object:root=true
@@ -71,16 +72,10 @@ type OriginIssuerSpec struct {
 	Auth OriginIssuerAuthentication `json:"auth"`
 }
 
-// OriginIssuerStatus contains status information about an OriginIssuer
-type OriginIssuerStatus struct {
-	// List of status conditions to indicate the status of an OriginIssuer
-	// Known condition types are `Ready`.
-	// +optional
-	Conditions []OriginIssuerCondition `json:"conditions,omitempty"`
-}
-
 // OriginIssuerAuthentication defines how to authenticate with the Cloudflare API.
 // Only one of `serviceKeyRef` may be specified.
+//
+// +kubebuilder:validation:ExactlyOneOf=serviceKeyRef;tokenRef
 type OriginIssuerAuthentication struct {
 	// ServiceKeyRef authenticates with an API Service Key (the "Origin CA Key").
 	// +optional
@@ -101,30 +96,6 @@ type SecretKeySelector struct {
 	Key string `json:"key"`
 }
 
-// OriginIssuerCondition contains condition information for the OriginIssuer.
-type OriginIssuerCondition struct {
-	// Type of the condition, known values are ('Ready')
-	Type ConditionType `json:"type"`
-
-	// Status of the condition, one of ('True', 'False', 'Unknown')
-	Status ConditionStatus `json:"status"`
-
-	// LastTransitionTime is the timestamp corresponding to the last status
-	// change of this condition.
-	// +optional
-	LastTransitionTime *metav1.Time `json:"lastTransitionTime,omitempty"`
-
-	// Reason is a brief machine readable explanation for the condition's last
-	// transition.
-	// +optional
-	Reason string `json:"reason,omitempty"`
-
-	// Message is a human readable description of the details of the last
-	// transition1, complementing reason.
-	// +optional
-	Message string `json:"message,omitempty"`
-}
-
 // +kubebuilder:validation:Enum=OriginRSA;OriginECC
 
 // RequestType represents the signature algorithm used to sign certificates.
@@ -136,33 +107,4 @@ const (
 
 	// RequestTypeOriginECC represents an ECDSA signature.
 	RequestTypeOriginECC RequestType = "OriginECC"
-)
-
-// +kubebuilder:validation:Enum=Ready
-
-// ConditionType represents an OriginIssuer condition value.
-type ConditionType string
-
-const (
-	// ConditionReady represents that an OriginIssuer condition is in
-	// a ready state and able to issue certificates.
-	// If the `status` of this condition is `False`, CertificateRequest
-	// controllers should prevent attempts to sign certificates.
-	ConditionReady ConditionType = "Ready"
-)
-
-// +kubebuilder:validation:Enum=True;False;Unknown
-
-// ConditionStatus represents a condition's status.
-type ConditionStatus string
-
-const (
-	// ConditionTrue represents the fact that a given condition is true.
-	ConditionTrue ConditionStatus = "True"
-
-	// ConditionFalse represents the fact that a given condition is false.
-	ConditionFalse ConditionStatus = "False"
-
-	// ConditionUnknown represents the fact that a given condition is unknown.
-	ConditionUnknown ConditionStatus = "Unknown"
 )

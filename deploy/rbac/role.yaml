@@ -26,23 +26,19 @@ rules:
   verbs:
   - get
   - list
-  - update
   - watch
 - apiGroups:
   - cert-manager.io
   resources:
   - certificaterequests/status
   verbs:
-  - get
   - patch
-  - update
 - apiGroups:
   - cert-manager.k8s.cloudflare.com
   resources:
   - clusteroriginissuers
   - originissuers
   verbs:
-  - create
   - get
   - list
   - watch
@@ -52,6 +48,35 @@ rules:
   - clusteroriginissuers/status
   - originissuers/status
   verbs:
-  - get
   - patch
+- apiGroups:
+  - certificates.k8s.io
+  resources:
+  - certificatesigningrequests
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - certificates.k8s.io
+  resources:
+  - certificatesigningrequests/status
+  verbs:
+  - patch
+- apiGroups:
+  - certificates.k8s.io
+  resourceNames:
+  - clusteroriginissuers.cert-manager.k8s.cloudflare.com/*
+  - originissuers.cert-manager.k8s.cloudflare.com/*
+  resources:
+  - signers
+  verbs:
+  - sign
+- apiGroups:
+  - coordination.k8s.io
+  resources:
+  - leases
+  verbs:
+  - create
+  - get
   - update

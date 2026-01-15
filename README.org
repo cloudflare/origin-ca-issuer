@@ -77,8 +77,9 @@ $ kubectl get originissuer.cert-manager.k8s.cloudflare.com prod-issuer -o json |
 [
   {
     "lastTransitionTime": "2020-10-07T00:05:00Z",
-    "message": "OriginIssuer verified an ready to sign certificates",
-    "reason": "Verified",
+    "message": "Succeeded checking the issuer",
+    "reason": "Checked",
+    "observedGeneration": 1,
     "status": "True",
     "type": "Ready"
   }
@@ -124,8 +125,9 @@ $ kubectl get originissuer.cert-manager.k8s.cloudflare.com prod-issuer -o json |
 [
   {
     "lastTransitionTime": "2020-10-07T00:05:00Z",
-    "message": "OriginIssuer verified an ready to sign certificates",
-    "reason": "Verified",
+    "message": "Succeeded checking the issuer",
+    "reason": "Checked",
+    "observedGeneration": 1,
     "status": "True",
     "type": "Ready"
   }
