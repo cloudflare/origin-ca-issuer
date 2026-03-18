@@ -116,8 +116,6 @@ func (s *Signer) Sign(ctx context.Context, req signer.CertificateRequestObject, 
 
 	var client *cfapi.Client
 	switch iss.GetAuth().GetType() {
-	case v1.AuthTypeServiceKey:
-		client = s.Builder.Clone().WithServiceKey(token).Build()
 	case v1.AuthTypeAPIToken:
 		client = s.Builder.Clone().WithToken(token).Build()
 	default:

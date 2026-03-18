@@ -36,105 +36,6 @@ func TestCertificateRequestReconcile(t *testing.T) {
 		error    error
 	}{
 		{
-			name: "working OriginIssuer with serviceKeyRef",
-			secret: &corev1.Secret{
-				ObjectMeta: metav1.ObjectMeta{
-					Name:      "service-key-issuer",
-					Namespace: "default",
-				},
-				Data: map[string][]byte{
-					"key": []byte("v1.0-0x00BAB10C"),
-				},
-			},
-			request: cmgen.CertificateRequest("foobar",
-				cmgen.SetCertificateRequestNamespace("default"),
-				cmgen.SetCertificateRequestDuration(&metav1.Duration{Duration: 7 * 24 * time.Hour}),
-				cmgen.SetCertificateRequestCSR(golden.Get(t, "csr.golden")),
-				cmgen.SetCertificateRequestIssuer(cmmeta.ObjectReference{
-					Name:  "foobar",
-					Kind:  "OriginIssuer",
-					Group: "cert-manager.k8s.cloudflare.com",
-				}),
-			),
-			issuer: &v1.OriginIssuer{
-				ObjectMeta: metav1.ObjectMeta{
-					Name:      "foobar",
-					Namespace: "default",
-				},
-				Spec: v1.OriginIssuerSpec{
-					RequestType: v1.RequestTypeOriginECC,
-					Auth: v1.OriginIssuerAuthentication{
-						ServiceKeyRef: &v1.SecretKeySelector{
-							Name: "service-key-issuer",
-							Key:  "key",
-						},
-					},
-				},
-				Status: issuerv1alpha1.IssuerStatus{
-					Conditions: []metav1.Condition{
-						{
-							Type:   string(cmapi.IssuerConditionReady),
-							Status: metav1.ConditionTrue,
-						},
-					},
-				},
-			},
-			recorder: RecorderMust(t, "testdata/working"),
-			expected: signer.PEMBundle{
-				ChainPEM: golden.Get(t, "certificate.golden"),
-				CAPEM:    eccCAPEM,
-			},
-		},
-		{
-			name: "working ClusterOriginIssuer with serviceKeyRef",
-			secret: &corev1.Secret{
-				ObjectMeta: metav1.ObjectMeta{
-					Name:      "service-key-issuer",
-					Namespace: "super-secret",
-				},
-				Data: map[string][]byte{
-					"key": []byte("v1.0-0x00BAB10C"),
-				},
-			},
-			request: cmgen.CertificateRequest("foobar",
-				cmgen.SetCertificateRequestNamespace("default"),
-				cmgen.SetCertificateRequestDuration(&metav1.Duration{Duration: 7 * 24 * time.Hour}),
-				cmgen.SetCertificateRequestCSR(golden.Get(t, "csr.golden")),
-				cmgen.SetCertificateRequestIssuer(cmmeta.ObjectReference{
-					Name:  "foobar",
-					Kind:  "ClusterOriginIssuer",
-					Group: "cert-manager.k8s.cloudflare.com",
-				}),
-			),
-			issuer: &v1.ClusterOriginIssuer{
-				ObjectMeta: metav1.ObjectMeta{
-					Name: "foobar",
-				},
-				Spec: v1.OriginIssuerSpec{
-					RequestType: v1.RequestTypeOriginECC,
-					Auth: v1.OriginIssuerAuthentication{
-						ServiceKeyRef: &v1.SecretKeySelector{
-							Name: "service-key-issuer",
-							Key:  "key",
-						},
-					},
-				},
-				Status: issuerv1alpha1.IssuerStatus{
-					Conditions: []metav1.Condition{
-						{
-							Type:   string(cmapi.IssuerConditionReady),
-							Status: metav1.ConditionTrue,
-						},
-					},
-				},
-			},
-			recorder: RecorderMust(t, "testdata/working"),
-			expected: signer.PEMBundle{
-				ChainPEM: golden.Get(t, "certificate.golden"),
-				CAPEM:    eccCAPEM,
-			},
-		},
-		{
 			name: "working OriginIssuer with tokenRef",
 			secret: &corev1.Secret{
 				ObjectMeta: metav1.ObjectMeta{
@@ -269,11 +170,11 @@ func TestCertificateRequestReconcile(t *testing.T) {
 			name: "requeue after API error",
 			secret: &corev1.Secret{
 				ObjectMeta: metav1.ObjectMeta{
-					Name:      "service-key-issuer",
+					Name:      "token-issuer",
 					Namespace: "default",
 				},
 				Data: map[string][]byte{
-					"key": []byte("djEuMC0weDAwQkFCMTBD"),
+					"token": []byte("djEuMC0weDAwQkFCMTBD"),
 				},
 			},
 			request: cmgen.CertificateRequest("foobar",
@@ -294,9 +195,9 @@ func TestCertificateRequestReconcile(t *testing.T) {
 				Spec: v1.OriginIssuerSpec{
 					RequestType: v1.RequestTypeOriginECC,
 					Auth: v1.OriginIssuerAuthentication{
-						ServiceKeyRef: &v1.SecretKeySelector{
-							Name: "service-key-issuer",
-							Key:  "key",
+						TokenRef: &v1.SecretKeySelector{
+							Name: "token-issuer",
+							Key:  "token",
 						},
 					},
 				},

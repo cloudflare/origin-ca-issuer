@@ -124,7 +124,7 @@ func TestSign(t *testing.T) {
 			defer ts.Close()
 
 			client := New(
-				WithServiceKey([]byte("v1.0-FFFF-FFFF")),
+				WithToken([]byte("test-api-token")),
 				WithClient(ts.Client()),
 				Must(WithEndpoint(ts.URL)),
 			)
