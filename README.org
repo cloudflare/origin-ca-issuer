@@ -39,7 +39,7 @@ pod/origin-ca-issuer-1234568-abcdw  1/1     Running     0           1m
 
 *** Adding an OriginIssuer
 **** API Token
-Origin CA Issuer can use an API token that contains the "Zone / SSL and Certificates / Edit" permission, which can be scoped to specific accounts or zones. Both [[https://developers.cloudflare.com/fundamentals/api/get-started/create-token/][user API tokens]] and [[https://developers.cloudflare.com/fundamentals/api/get-started/account-owned-tokens/][Account owned tokens]] are supported.
+Origin CA Issuer can use an API token that contains the "Zone / SSL and Certificates / Edit" permission, which can be scoped to specific accounts or zones. Both [[https://developers.cloudflare.com/fundamentals/api/get-started/create-token/][User API tokens]] and [[https://developers.cloudflare.com/fundamentals/api/get-started/account-owned-tokens/][Account API tokens]] are supported. However, *Account API tokens are strongly recommended* to ensure that your infrastructure continues working even if a user is removed from an account.
 
 #+BEGIN_SRC sh :file ./deploy/example/cfapi-token.secret.yaml :results silent file :exports code
 kubectl create secret generic \
@@ -68,54 +68,6 @@ spec:
 $ kubectl apply -f api-token.secret.yaml -f issuer.yaml
 originissuer.cert-manager.k8s.cloudflare.com/prod-issuer created
 secret/cfapi-token created
-#+END_EXAMPLE
-
-The status conditions of the OriginIssuer resource will be updated once the Origin CA Issuer is ready.
-
-#+BEGIN_EXAMPLE
-$ kubectl get originissuer.cert-manager.k8s.cloudflare.com prod-issuer -o json | jq .status.conditions
-[
-  {
-    "lastTransitionTime": "2020-10-07T00:05:00Z",
-    "message": "Succeeded checking the issuer",
-    "reason": "Checked",
-    "observedGeneration": 1,
-    "status": "True",
-    "type": "Ready"
-  }
-]
-#+END_EXAMPLE
-
-**** Origin CA Service Key
-The [[https://developers.cloudflare.com/fundamentals/api/get-started/ca-keys/][Origin CA Key]] is supported but discouraged in favor of API tokens. This key will begin with "v1.0-" and is different from the legacy "Global API Key".
-
-#+BEGIN_SRC sh :file ./deploy/example/service-key.secret.yaml :results silent file :exports code
-kubectl create secret generic \
-    --dry-run \
-    -n default service-key \
-    --from-literal key=v1.0-FFFFFFF-FFFFFFFF -oyaml
-#+END_SRC
-
-Then create an OriginIssuer referencing the secret created above.
-
-#+BEGIN_SRC yaml :tangle ./deploy/example/service-key.issuer.yaml :comments link
-apiVersion: cert-manager.k8s.cloudflare.com/v1
-kind: OriginIssuer
-metadata:
-  name: prod-issuer
-  namespace: default
-spec:
-  requestType: OriginECC
-  auth:
-    serviceKeyRef:
-      name: service-key
-      key: key
-#+END_SRC
-
-#+BEGIN_EXAMPLE
-$ kubectl apply -f service-key.secret.yaml -f issuer.yaml
-originissuer.cert-manager.k8s.cloudflare.com/prod-issuer created
-secret/service-key created
 #+END_EXAMPLE
 
 The status conditions of the OriginIssuer resource will be updated once the Origin CA Issuer is ready.

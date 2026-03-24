@@ -46,24 +46,6 @@ spec:
                 description: Auth configures how to authenticate with the Cloudflare
                   API.
                 properties:
-                  serviceKeyRef:
-                    description: ServiceKeyRef authenticates with an API Service Key
-                      (the "Origin CA Key").
-                    properties:
-                      key:
-                        description: Key of the secret to select from. Must be a valid
-                          secret key.
-                        type: string
-                      name:
-                        description: |-
-                          Name of the secret in the issuer's namespace to select. If a cluster-scoped
-                          issuer, the secret is selected from the "cluster resource namespace" configured
-                          on the controller.
-                        type: string
-                    required:
-                    - key
-                    - name
-                    type: object
                   tokenRef:
                     description: TokenRef authenticates with an API Token.
                     properties:
@@ -81,12 +63,9 @@ spec:
                     - key
                     - name
                     type: object
+                required:
+                - tokenRef
                 type: object
-                x-kubernetes-validations:
-                - message: exactly one of the fields in [serviceKeyRef tokenRef] must
-                    be set
-                  rule: '[has(self.serviceKeyRef),has(self.tokenRef)].filter(x,x==true).size()
-                    == 1'
               requestType:
                 description: RequestType is the signature algorithm Cloudflare should
                   use to sign the certificate.

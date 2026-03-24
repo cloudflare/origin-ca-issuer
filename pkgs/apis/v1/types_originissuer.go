@@ -73,17 +73,9 @@ type OriginIssuerSpec struct {
 }
 
 // OriginIssuerAuthentication defines how to authenticate with the Cloudflare API.
-// Only one of `serviceKeyRef` may be specified.
-//
-// +kubebuilder:validation:ExactlyOneOf=serviceKeyRef;tokenRef
 type OriginIssuerAuthentication struct {
-	// ServiceKeyRef authenticates with an API Service Key (the "Origin CA Key").
-	// +optional
-	ServiceKeyRef *SecretKeySelector `json:"serviceKeyRef,omitempty"`
-
 	// TokenRef authenticates with an API Token.
-	// +optional
-	TokenRef *SecretKeySelector `json:"tokenRef,omitempty"`
+	TokenRef *SecretKeySelector `json:"tokenRef"`
 }
 
 // SecretKeySelector contains a reference to a secret.

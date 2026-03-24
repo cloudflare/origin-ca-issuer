@@ -5,18 +5,12 @@ import (
 )
 
 type Builder struct {
-	hc         *http.Client
-	serviceKey []byte
-	token      []byte
+	hc    *http.Client
+	token []byte
 }
 
 func NewBuilder() *Builder {
 	return &Builder{}
-}
-
-func (b *Builder) WithServiceKey(key []byte) *Builder {
-	b.serviceKey = key
-	return b
 }
 
 func (b *Builder) WithToken(token []byte) *Builder {
@@ -31,18 +25,14 @@ func (b *Builder) WithClient(hc *http.Client) *Builder {
 
 func (b *Builder) Clone() *Builder {
 	return &Builder{
-		hc:         b.hc,
-		serviceKey: b.serviceKey,
+		hc:    b.hc,
+		token: b.token,
 	}
 }
 
 func (b *Builder) Build() *Client {
-	switch {
-	case b.serviceKey != nil:
-		return New(WithServiceKey(b.serviceKey), WithClient(b.hc))
-	case b.token != nil:
+	if b.token != nil {
 		return New(WithToken(b.token), WithClient(b.hc))
-	default:
-		return nil
 	}
+	return nil
 }

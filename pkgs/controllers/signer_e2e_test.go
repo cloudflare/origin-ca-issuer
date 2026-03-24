@@ -39,20 +39,20 @@ func TestOriginIssuerCertificateRequestE2E(t *testing.T) {
 		Spec: v1.OriginIssuerSpec{
 			RequestType: v1.RequestTypeOriginECC,
 			Auth: v1.OriginIssuerAuthentication{
-				ServiceKeyRef: &v1.SecretKeySelector{
-					Name: "issuer-service-key",
-					Key:  "key",
+				TokenRef: &v1.SecretKeySelector{
+					Name: "issuer-token",
+					Key:  "token",
 				},
 			},
 		},
 	}
 	secret := &corev1.Secret{
 		ObjectMeta: metav1.ObjectMeta{
-			Name:      "issuer-service-key",
+			Name:      "issuer-token",
 			Namespace: "default",
 		},
 		Data: map[string][]byte{
-			"key": []byte("v1.0-0x00BAB10C"),
+			"token": []byte("api-token"),
 		},
 	}
 	request := cmgen.CertificateRequest("foobar",

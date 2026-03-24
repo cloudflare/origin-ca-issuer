@@ -8,9 +8,8 @@ import (
 type AuthType int
 
 const (
-	AuthTypeUnknown    AuthType = 0
-	AuthTypeServiceKey AuthType = 1
-	AuthTypeAPIToken   AuthType = 2
+	AuthTypeUnknown  AuthType = 0
+	AuthTypeAPIToken AuthType = 2
 )
 
 var _ issuerv1alpha1.Issuer = (*OriginIssuer)(nil)
@@ -57,22 +56,12 @@ func (iss *ClusterOriginIssuer) GetRequestType() RequestType {
 }
 
 func (a OriginIssuerAuthentication) GetSecretKeySelector() *SecretKeySelector {
-	switch {
-	case a.ServiceKeyRef != nil:
-		return a.ServiceKeyRef
-	case a.TokenRef != nil:
-		return a.TokenRef
-	}
-	return nil
+	return a.TokenRef
 }
 
 func (a OriginIssuerAuthentication) GetType() AuthType {
-	switch {
-	case a.ServiceKeyRef != nil:
-		return AuthTypeServiceKey
-	case a.TokenRef != nil:
+	if a.TokenRef != nil {
 		return AuthTypeAPIToken
-	default:
-		return AuthTypeUnknown
 	}
+	return AuthTypeUnknown
 }
