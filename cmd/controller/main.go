@@ -77,8 +77,17 @@ func main() {
 
 	collection := provisioners.CollectionWith(nil)
 
+	cfapiTimeout := 30 * time.Second
+	if v := os.Getenv("CFAPI_TIMEOUT"); v != "" {
+		if d, err := time.ParseDuration(v); err == nil {
+			cfapiTimeout = d
+		} else {
+			log.Error(err, "invalid CFAPI_TIMEOUT, using default", "value", v, "default", cfapiTimeout)
+		}
+	}
+
 	httpClient := &http.Client{
-		Timeout: 30 * time.Second,
+		Timeout: cfapiTimeout,
 	}
 	f := cfapi.FactoryFunc(func(serviceKey []byte) (cfapi.Interface, error) {
 		return cfapi.New(serviceKey, cfapi.WithClient(httpClient)), nil
