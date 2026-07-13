@@ -59,7 +59,7 @@ func TestOriginIssuerCertificateRequestE2E(t *testing.T) {
 		cmgen.SetCertificateRequestNamespace("default"),
 		cmgen.SetCertificateRequestDuration(&metav1.Duration{Duration: 7 * 24 * time.Hour}),
 		cmgen.SetCertificateRequestCSR(golden.Get(t, "csr.golden")),
-		cmgen.SetCertificateRequestIssuer(cmmeta.ObjectReference{
+		cmgen.SetCertificateRequestIssuer(cmmeta.IssuerReference{
 			Name:  "foo",
 			Kind:  "OriginIssuer",
 			Group: "cert-manager.k8s.cloudflare.com",
