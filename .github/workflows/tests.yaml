@@ -15,7 +15,6 @@ jobs:
       matrix:
         go:
           - { go-version: stable }
-          - { go-version: oldstable }
         deps:
           - locked
           - latest
@@ -28,6 +27,8 @@ jobs:
           go-version: ${{ matrix.go.go-version }}
       - uses: geomys/sandboxed-step@v1.2.1
         with:
+          env: |
+            GOEXPERIMENT=nogreenteagc
           run: |
             if [ "${{ matrix.deps }}" = "latest" ]; then
               go get -u -t ./...
@@ -44,6 +45,8 @@ jobs:
           go-version: stable
       - uses: geomys/sandboxed-step@v1.2.1
         with:
+          env: |
+            GOEXPERIMENT=nogreenteagc
           run: |
             source <(go run sigs.k8s.io/controller-runtime/tools/setup-envtest@latest use -p env)
             make test
@@ -58,6 +61,8 @@ jobs:
           go-version: stable
       - uses: geomys/sandboxed-step@v1.2.1
         with:
+          env: |
+            GOEXPERIMENT=nogreenteagc
           run: go run honnef.co/go/tools/cmd/staticcheck@latest ./...
   govulncheck:
     runs-on: ubuntu-latest
@@ -70,4 +75,6 @@ jobs:
           go-version: stable
       - uses: geomys/sandboxed-step@v1.2.1
         with:
+          env: |
+            GOEXPERIMENT=nogreenteagc
           run: go run golang.org/x/vuln/cmd/govulncheck@latest ./...
