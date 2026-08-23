@@ -3,7 +3,8 @@ package cfapi
 import (
 	"bytes"
 	"context"
-	"encoding/json"
+	"encoding/json/jsontext"
+	"encoding/json/v2"
 	"fmt"
 	"net/http"
 	"net/url"
@@ -88,10 +89,10 @@ type SignResponse struct {
 }
 
 type APIResponse struct {
-	Success  bool            `json:"success"`
-	Errors   []APIError      `json:"errors"`
-	Messages []APIError      `json:"messages"`
-	Result   json.RawMessage `json:"result"`
+	Success  bool           `json:"success"`
+	Errors   []APIError     `json:"errors"`
+	Messages []APIError     `json:"messages"`
+	Result   jsontext.Value `json:"result"`
 }
 
 type APIError struct {
@@ -144,7 +145,7 @@ func (c *Client) Sign(ctx context.Context, req *SignRequest) (*SignResponse, err
 	rayID := resp.Header.Get("CF-Ray")
 
 	api := APIResponse{}
-	if err := json.NewDecoder(resp.Body).Decode(&api); err != nil {
+	if err := json.UnmarshalRead(resp.Body, &api); err != nil {
 		return nil, err
 	}
 

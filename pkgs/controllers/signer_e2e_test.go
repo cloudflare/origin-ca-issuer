@@ -32,10 +32,8 @@ func TestOriginIssuerCertificateRequestE2E(t *testing.T) {
 	ctx := t.Context()
 
 	issuer := &v1.OriginIssuer{
-		ObjectMeta: metav1.ObjectMeta{
-			Name:      "foo",
-			Namespace: "default",
-		},
+		Name:      "foo",
+		Namespace: "default",
 		Spec: v1.OriginIssuerSpec{
 			RequestType: v1.RequestTypeOriginECC,
 			Auth: v1.OriginIssuerAuthentication{
@@ -47,10 +45,8 @@ func TestOriginIssuerCertificateRequestE2E(t *testing.T) {
 		},
 	}
 	secret := &corev1.Secret{
-		ObjectMeta: metav1.ObjectMeta{
-			Name:      "issuer-service-key",
-			Namespace: "default",
-		},
+		Name:      "issuer-service-key",
+		Namespace: "default",
 		Data: map[string][]byte{
 			"key": []byte("v1.0-0x00BAB10C"),
 		},

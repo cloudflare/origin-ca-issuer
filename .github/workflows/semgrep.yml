@@ -24,6 +24,6 @@ jobs:
       - uses: actions/setup-python@v6
         with:
           python-version: "3.x"
-      - uses: geomys/sandboxed-step@v1.2.1
+      - uses: geomys/sandboxed-step@v1.2.2
         with:
           run: pipx run semgrep==1.160.0 scan --config=auto
