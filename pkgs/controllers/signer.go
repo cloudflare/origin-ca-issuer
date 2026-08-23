@@ -54,7 +54,6 @@ func (s *Signer) SetupWithManager(ctx context.Context, mgr manager.Manager) erro
 		Check:                          s.Check,
 		Sign:                           s.Sign,
 		EventRecorder:                  mgr.GetEventRecorder("originissuer." + v1.GroupVersion.Group),
-		SetCAOnCertificateRequest:      true,
 		DisableKubernetesCSRController: false,
 	}
 	return ctrl.SetupWithManager(ctx, mgr)

@@ -38,10 +38,8 @@ func TestCertificateRequestReconcile(t *testing.T) {
 		{
 			name: "working OriginIssuer with serviceKeyRef",
 			secret: &corev1.Secret{
-				ObjectMeta: metav1.ObjectMeta{
-					Name:      "service-key-issuer",
-					Namespace: "default",
-				},
+				Name:      "service-key-issuer",
+				Namespace: "default",
 				Data: map[string][]byte{
 					"key": []byte("v1.0-0x00BAB10C"),
 				},
@@ -57,10 +55,8 @@ func TestCertificateRequestReconcile(t *testing.T) {
 				}),
 			),
 			issuer: &v1.OriginIssuer{
-				ObjectMeta: metav1.ObjectMeta{
-					Name:      "foobar",
-					Namespace: "default",
-				},
+				Name:      "foobar",
+				Namespace: "default",
 				Spec: v1.OriginIssuerSpec{
 					RequestType: v1.RequestTypeOriginECC,
 					Auth: v1.OriginIssuerAuthentication{
@@ -88,10 +84,8 @@ func TestCertificateRequestReconcile(t *testing.T) {
 		{
 			name: "working ClusterOriginIssuer with serviceKeyRef",
 			secret: &corev1.Secret{
-				ObjectMeta: metav1.ObjectMeta{
-					Name:      "service-key-issuer",
-					Namespace: "super-secret",
-				},
+				Name:      "service-key-issuer",
+				Namespace: "super-secret",
 				Data: map[string][]byte{
 					"key": []byte("v1.0-0x00BAB10C"),
 				},
@@ -107,9 +101,7 @@ func TestCertificateRequestReconcile(t *testing.T) {
 				}),
 			),
 			issuer: &v1.ClusterOriginIssuer{
-				ObjectMeta: metav1.ObjectMeta{
-					Name: "foobar",
-				},
+				Name: "foobar",
 				Spec: v1.OriginIssuerSpec{
 					RequestType: v1.RequestTypeOriginECC,
 					Auth: v1.OriginIssuerAuthentication{
@@ -137,10 +129,8 @@ func TestCertificateRequestReconcile(t *testing.T) {
 		{
 			name: "working OriginIssuer with tokenRef",
 			secret: &corev1.Secret{
-				ObjectMeta: metav1.ObjectMeta{
-					Name:      "token-issuer",
-					Namespace: "default",
-				},
+				Name:      "token-issuer",
+				Namespace: "default",
 				Data: map[string][]byte{
 					"token": []byte("api-token"),
 				},
@@ -156,10 +146,8 @@ func TestCertificateRequestReconcile(t *testing.T) {
 				}),
 			),
 			issuer: &v1.OriginIssuer{
-				ObjectMeta: metav1.ObjectMeta{
-					Name:      "foobar",
-					Namespace: "default",
-				},
+				Name:      "foobar",
+				Namespace: "default",
 				Spec: v1.OriginIssuerSpec{
 					RequestType: v1.RequestTypeOriginECC,
 					Auth: v1.OriginIssuerAuthentication{
@@ -187,10 +175,8 @@ func TestCertificateRequestReconcile(t *testing.T) {
 		{
 			name: "working ClusterOriginIssuer with tokenRef",
 			secret: &corev1.Secret{
-				ObjectMeta: metav1.ObjectMeta{
-					Name:      "token-issuer",
-					Namespace: "super-secret",
-				},
+				Name:      "token-issuer",
+				Namespace: "super-secret",
 				Data: map[string][]byte{
 					"token": []byte("api-token"),
 				},
@@ -206,9 +192,7 @@ func TestCertificateRequestReconcile(t *testing.T) {
 				}),
 			),
 			issuer: &v1.ClusterOriginIssuer{
-				ObjectMeta: metav1.ObjectMeta{
-					Name: "foobar",
-				},
+				Name: "foobar",
 				Spec: v1.OriginIssuerSpec{
 					RequestType: v1.RequestTypeOriginECC,
 					Auth: v1.OriginIssuerAuthentication{
@@ -247,11 +231,9 @@ func TestCertificateRequestReconcile(t *testing.T) {
 				}),
 			),
 			issuer: &v1.OriginIssuer{
-				ObjectMeta: metav1.ObjectMeta{
-					Name:      "foobar",
-					Namespace: "default",
-				},
-				Spec: v1.OriginIssuerSpec{},
+				Name:      "foobar",
+				Namespace: "default",
+				Spec:      v1.OriginIssuerSpec{},
 				Status: issuerv1alpha1.IssuerStatus{
 					Conditions: []metav1.Condition{
 						{
@@ -268,10 +250,8 @@ func TestCertificateRequestReconcile(t *testing.T) {
 		{
 			name: "requeue after API error",
 			secret: &corev1.Secret{
-				ObjectMeta: metav1.ObjectMeta{
-					Name:      "service-key-issuer",
-					Namespace: "default",
-				},
+				Name:      "service-key-issuer",
+				Namespace: "default",
 				Data: map[string][]byte{
 					"key": []byte("djEuMC0weDAwQkFCMTBD"),
 				},
@@ -287,10 +267,8 @@ func TestCertificateRequestReconcile(t *testing.T) {
 				}),
 			),
 			issuer: &v1.OriginIssuer{
-				ObjectMeta: metav1.ObjectMeta{
-					Name:      "foobar",
-					Namespace: "default",
-				},
+				Name:      "foobar",
+				Namespace: "default",
 				Spec: v1.OriginIssuerSpec{
 					RequestType: v1.RequestTypeOriginECC,
 					Auth: v1.OriginIssuerAuthentication{

@@ -1,7 +1,7 @@
 package cfapi
 
 import (
-	"encoding/json"
+	"encoding/json/v2"
 	"fmt"
 	"net/http"
 	"net/http/httptest"
@@ -120,13 +120,12 @@ func TestSign(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			ts := httptest.NewTLSServer(tt.handler)
+			ts := httptest.NewTestServer(t, tt.handler)
 			defer ts.Close()
 
 			client := New(
 				WithServiceKey([]byte("v1.0-FFFF-FFFF")),
 				WithClient(ts.Client()),
-				Must(WithEndpoint(ts.URL)),
 			)
 			resp, err := client.Sign(t.Context(), &SignRequest{
 				Hostnames: []string{"example.com"},
@@ -146,12 +145,4 @@ func TestSign(t *testing.T) {
 		})
 	}
 
-}
-
-func Must(opt Options, err error) Options {
-	if err != nil {
-		panic("option constructo returned error " + err.Error())
-	}
-
-	return opt
 }
