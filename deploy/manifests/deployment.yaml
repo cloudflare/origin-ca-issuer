@@ -16,7 +16,7 @@ spec:
       serviceAccountName: originissuer-control
       containers:
         - name: origin-ca-controller
-          image: docker.io/cloudflare/origin-ca-issuer:v0.14.4
+          image: docker.io/cloudflare/origin-ca-issuer:v0.15.0
           args:
             - --cluster-resource-namespace=$(POD_NAMESPACE)
           env:

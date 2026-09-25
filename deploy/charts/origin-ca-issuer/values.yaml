@@ -18,7 +18,7 @@ global:
 controller:
   image:
     repository: docker.io/cloudflare/origin-ca-issuer
-    tag: v0.14.4
+    tag: v0.15.0
     pullPolicy: Always
 
   replicaCount: 1
