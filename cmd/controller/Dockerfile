@@ -1,6 +1,6 @@
 FROM --platform=$BUILDPLATFORM docker.io/tonistiigi/xx:1.9.0 AS xx
 
-FROM --platform=$BUILDPLATFORM docker.io/library/golang:1.27.1-trixie AS builder
+FROM --platform=$BUILDPLATFORM docker.io/library/golang:1.27.3-trixie AS builder
 COPY --from=xx / /
 ARG TARGETPLATFORM
 WORKDIR /go/src/app
