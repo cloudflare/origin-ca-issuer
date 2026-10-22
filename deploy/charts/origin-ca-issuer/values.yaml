@@ -52,13 +52,8 @@ controller:
     # Optional additional annotations to add to the controller's service account.
     # annotations: {}
 
-  resources:
-    limits:
-      cpu: "1"
-      memory: 512Mi
-    requests:
-      cpu: "1"
-      memory: 512Mi
+  # Resource requests and limits
+  resources: {}
 
   # Optional Pod Security Context
   # ref: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/
